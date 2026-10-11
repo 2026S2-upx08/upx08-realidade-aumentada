@@ -1,9 +1,20 @@
 import { useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { XR, createXRStore, useXRHitTest, useXREvent } from '@react-three/xr'
+import {
+  XR,
+  createXRStore,
+  useXRHitTest,
+  useXREvent,
+  IfInSessionMode,
+  XRDomOverlay,
+} from '@react-three/xr'
 import { Matrix4, Vector3, type Mesh } from 'three'
 
-const store = createXRStore({ hitTest: true })
+const store = createXRStore({ hitTest: true, domOverlay: true })
+
+const MIN_SIZE_M = 1
+const MAX_SIZE_M = 4
+const DEFAULT_SIZE_M = 2.25
 
 function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   const ref = useRef<Mesh>(null)
@@ -31,9 +42,6 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
     }
   })
 
-  // Posiciona o objeto em qualquer evento de seleção (toque na tela ou
-  // gatilho do controlador), sem exigir que o raio acerte o anel fino da
-  // retícula, que na prática é um alvo pequeno demais pra clicar com precisão.
   useXREvent('select', () => {
     if (hasHit) {
       onSelect(position.current.clone())
@@ -48,17 +56,52 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   )
 }
 
-function PlacedMarker({ position }: { position: Vector3 }) {
+function AnchoredModel({ position, sizeM }: { position: Vector3; sizeM: number }) {
   return (
-    <mesh position={position}>
-      <boxGeometry args={[0.15, 0.15, 0.15]} />
+    <mesh
+      position={[position.x, position.y + sizeM / 2, position.z]}
+      scale={[sizeM * 0.4, sizeM, sizeM * 0.4]}
+    >
+      <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color="orange" />
     </mesh>
   )
 }
 
+function SizeControl({
+  sizeM,
+  onChange,
+}: {
+  sizeM: number
+  onChange: (value: number) => void
+}) {
+  return (
+    <IfInSessionMode allow="immersive-ar">
+      <XRDomOverlay>
+        <div className="absolute bottom-6 left-1/2 w-64 -translate-x-1/2 rounded-md bg-white/90 p-3 text-center text-sm shadow-md">
+          <div className="mb-1 flex justify-between text-xs text-gray-600">
+            <span>{MIN_SIZE_M} m</span>
+            <span>{sizeM.toFixed(1)} m</span>
+            <span>{MAX_SIZE_M} m</span>
+          </div>
+          <input
+            type="range"
+            min={MIN_SIZE_M}
+            max={MAX_SIZE_M}
+            step={0.1}
+            value={sizeM}
+            onChange={(event) => onChange(Number(event.target.value))}
+            className="w-full"
+          />
+        </div>
+      </XRDomOverlay>
+    </IfInSessionMode>
+  )
+}
+
 export default function App() {
-  const [placed, setPlaced] = useState<Vector3[]>([])
+  const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
+  const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
 
   return (
     <>
@@ -73,10 +116,9 @@ export default function App() {
         <XR store={store}>
           <ambientLight intensity={1} />
           <directionalLight position={[1, 2, 1]} />
-          <Reticle onSelect={(position) => setPlaced((prev) => [...prev, position])} />
-          {placed.map((position, index) => (
-            <PlacedMarker key={index} position={position} />
-          ))}
+          <Reticle onSelect={(position) => setAnchoredAt((prev) => prev ?? position)} />
+          {anchoredAt && <AnchoredModel position={anchoredAt} sizeM={sizeM} />}
+          <SizeControl sizeM={sizeM} onChange={setSizeM} />
         </XR>
       </Canvas>
     </>
