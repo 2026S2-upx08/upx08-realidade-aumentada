@@ -8,7 +8,7 @@ import {
   IfInSessionMode,
   XRDomOverlay,
 } from '@react-three/xr'
-import { Matrix4, Vector3, type Mesh } from 'three'
+import { Matrix4, Vector3, type Group } from 'three'
 
 const store = createXRStore({ hitTest: true, domOverlay: true })
 
@@ -16,8 +16,11 @@ const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
 
+const REFERENCE_HEIGHT_M = 45
+const HUMAN_HEIGHT_M = 1.7
+
 function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
-  const ref = useRef<Mesh>(null)
+  const ref = useRef<Group>(null)
   const [hasHit, setHasHit] = useState(false)
   const matrixHelper = useRef(new Matrix4())
   const position = useRef(new Vector3())
@@ -49,7 +52,7 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   })
 
   return (
-    <mesh ref={ref} visible={hasHit} rotation-x={-Math.PI / 2}>
+    <mesh ref={ref as never} visible={hasHit} rotation-x={-Math.PI / 2}>
       <ringGeometry args={[0.08, 0.1, 32]} />
       <meshBasicMaterial color="white" />
     </mesh>
@@ -57,14 +60,24 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
 }
 
 function AnchoredModel({ position, sizeM }: { position: Vector3; sizeM: number }) {
+  const scaleFactor = sizeM / REFERENCE_HEIGHT_M
+  const humanHeight = HUMAN_HEIGHT_M * scaleFactor
+
   return (
-    <mesh
-      position={[position.x, position.y + sizeM / 2, position.z]}
-      scale={[sizeM * 0.4, sizeM, sizeM * 0.4]}
-    >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="orange" />
-    </mesh>
+    <group position={position}>
+      <mesh position-y={sizeM / 2} scale={[sizeM * 0.4, sizeM, sizeM * 0.4]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="orange" />
+      </mesh>
+
+      <mesh
+        position={[sizeM * 0.6, humanHeight / 2, 0]}
+        scale={[0.3 * scaleFactor, humanHeight, 0.3 * scaleFactor]}
+      >
+        <capsuleGeometry args={[0.5, 0.5, 4, 8]} />
+        <meshStandardMaterial color="dodgerblue" />
+      </mesh>
+    </group>
   )
 }
 
@@ -116,7 +129,7 @@ export default function App() {
         <XR store={store}>
           <ambientLight intensity={1} />
           <directionalLight position={[1, 2, 1]} />
-          <Reticle onSelect={(position) => setAnchoredAt((prev) => prev ?? position)} />
+          <Reticle onSelect={setAnchoredAt} />
           {anchoredAt && <AnchoredModel position={anchoredAt} sizeM={sizeM} />}
           <SizeControl sizeM={sizeM} onChange={setSizeM} />
         </XR>
