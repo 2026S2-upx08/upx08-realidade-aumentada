@@ -70,11 +70,8 @@ function AnchoredModel({ position, sizeM }: { position: Vector3; sizeM: number }
         <meshStandardMaterial color="orange" />
       </mesh>
 
-      <mesh
-        position={[sizeM * 0.6, humanHeight / 2, 0]}
-        scale={[0.3 * scaleFactor, humanHeight, 0.3 * scaleFactor]}
-      >
-        <capsuleGeometry args={[0.5, 0.5, 4, 8]} />
+      <mesh position={[sizeM * 0.6, humanHeight / 2, 0]}>
+        <cylinderGeometry args={[0.15 * scaleFactor, 0.15 * scaleFactor, humanHeight, 8]} />
         <meshStandardMaterial color="dodgerblue" />
       </mesh>
     </group>
