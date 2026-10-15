@@ -16,8 +16,8 @@ const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
 
-const REFERENCE_HEIGHT_M = 45
 const HUMAN_HEIGHT_M = 1.7
+const HUMAN_RADIUS_M = 0.15
 
 function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   const ref = useRef<Group>(null)
@@ -60,8 +60,8 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
 }
 
 function AnchoredModel({ position, sizeM }: { position: Vector3; sizeM: number }) {
-  const scaleFactor = sizeM / REFERENCE_HEIGHT_M
-  const humanHeight = HUMAN_HEIGHT_M * scaleFactor
+  const monumentHalfWidth = (sizeM * 0.4) / 2
+  const humanX = monumentHalfWidth + 0.3 + HUMAN_RADIUS_M
 
   return (
     <group position={position}>
@@ -70,8 +70,8 @@ function AnchoredModel({ position, sizeM }: { position: Vector3; sizeM: number }
         <meshStandardMaterial color="orange" />
       </mesh>
 
-      <mesh position={[sizeM * 0.6, humanHeight / 2, 0]}>
-        <cylinderGeometry args={[0.15 * scaleFactor, 0.15 * scaleFactor, humanHeight, 8]} />
+      <mesh position={[humanX, HUMAN_HEIGHT_M / 2, 0]}>
+        <cylinderGeometry args={[HUMAN_RADIUS_M, HUMAN_RADIUS_M, HUMAN_HEIGHT_M, 8]} />
         <meshStandardMaterial color="dodgerblue" />
       </mesh>
     </group>
