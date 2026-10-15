@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Questionário SUS — Conectway</title>
+
+<!--
+  QUESTIONÁRIO SUS — Projeto UPx08 / Conectway
+  Card #49, DEV - Implementar questionário SUS de usabilidade.
+
+  Arquivo único, sem dependências. Abre com duplo clique, funciona sem
+  internet e sem servidor local. Para testar no celular, basta hospedar
+  este arquivo em qualquer lugar (Vercel, GitHub Pages) ou abri-lo pelo
+  navegador do aparelho.
+
+  Instrumento original:
+  BROOKE, John. SUS: a "quick and dirty" usability scale. In: JORDAN, P. W.
+  et al. (ed.). Usability Evaluation in Industry. London: Taylor & Francis,
+  1996. p. 189-194.
+-->
+
+<style>
+:root {
+  --tinta: #16202e;
+  --suave: #5b6676;
+  --borda: #d8dee6;
+  --destaque: #1f5f8b;
+  --alerta: #a4342a;
+  --pendente: #fdf3f2;
+  --ok: #1d6b45;
+  --fundo-app: #eef1f5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fundo-app);
+  color: var(--tinta);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  touch-action: manipulation;
+}
+
+.folha {
+  max-width: 44rem;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  padding: 1.5rem 1rem 3rem;
+}
+
+h1 { font-size: 1.4rem; margin: 0 0 .5rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .75rem; }
+p  { margin: 0 0 .6rem; }
+.suave { color: var(--suave); }
+.peq   { font-size: .85rem; }
+
+/* ---------- tela inicial ---------- */
+.campo { margin: 1.1rem 0 0; }
+.campo label { display: block; font-weight: 600; margin-bottom: .35rem; }
+.campo input[type="text"], .campo select {
+  width: 100%; min-height: 3rem; padding: 0 .75rem;
+  font-size: 1rem; font-family: inherit;
+  border: 1.5px solid var(--borda); border-radius: .5rem; background: #fff;
+}
+.linha-check { display: flex; align-items: center; gap: .6rem; margin-top: 1.1rem; }
+.linha-check input { width: 1.15rem; height: 1.15rem; }
+
+/* ---------- itens do questionário ---------- */
+ol.itens { list-style: none; margin: 0; padding: 0; }
+
+.item { border-top: 1px solid var(--borda); padding: 1.25rem 0; }
+.item.pendente {
+  background: var(--pendente);
+  margin: 0 -.5rem; padding: 1.25rem .5rem; border-radius: .4rem;
+}
+
+fieldset { border: 0; margin: 0; padding: 0; }
+legend { padding: 0; margin-bottom: .9rem; font-size: 1rem; font-weight: 600; }
+.numero { color: var(--suave); font-weight: 400; margin-right: .15rem; }
+
+.escala { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.opcoes { grid-column: 1 / -1; order: 1; display: flex; justify-content: space-between; gap: .4rem; }
+.rotulo { font-size: .78rem; color: var(--suave); line-height: 1.3; }
+.rot-ini { order: 2; }
+.rot-fim { order: 3; text-align: right; }
+
+.opcao { flex: 1; position: relative; cursor: pointer; }
+.opcao input {
+  position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer;
+}
+.bolha {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 3rem;
+  border: 1.5px solid var(--borda); border-radius: .5rem;
+  font-size: 1rem; font-weight: 600; color: var(--suave); background: #fff;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.opcao input:checked + .bolha {
+  background: var(--destaque); border-color: var(--destaque); color: #fff;
+}
+.opcao input:focus-visible + .bolha {
+  outline: 3px solid var(--destaque); outline-offset: 2px;
+}
+
+.aviso { margin: .6rem 0 0; color: var(--alerta); font-size: .88rem; font-weight: 600; }
+
+/* ---------- rodapé e botões ---------- */
+.rodape { margin-top: 2rem; border-top: 1px solid var(--borda); padding-top: 1.25rem; }
+.progresso { margin: 0 0 .9rem; font-size: .88rem; color: var(--suave); }
+
+button {
+  min-height: 3rem; padding: 0 1.4rem;
+  border: 1.5px solid var(--destaque); border-radius: .5rem;
+  background: #fff; color: var(--destaque);
+  font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer;
+}
+button.cheio { width: 100%; background: var(--destaque); color: #fff; }
+button:focus-visible { outline: 3px solid var(--destaque); outline-offset: 2px; }
+.acoes { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+
+/* ---------- conferência do cálculo ---------- */
+.conferencia {
+  margin-top: 2.5rem; border: 1px solid var(--borda); border-radius: .5rem; padding: 1rem;
+  background: #fafbfc;
+}
+.conferencia table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: .6rem; }
+.conferencia td { padding: .3rem 0; border-bottom: 1px solid var(--borda); }
+.conferencia td:last-child { text-align: right; font-weight: 600; }
+.passou { color: var(--ok); }
+.falhou { color: var(--alerta); }
+
+.pontuacao { font-size: 1.15rem; margin: 1rem 0 0; }
+.ref { color: var(--suave); font-size: .85rem; font-weight: 400; }
+
+@media (min-width: 34rem) {
+  .escala { grid-template-columns: auto 1fr auto; align-items: center; gap: .75rem; }
+  .opcoes { grid-column: auto; order: 2; }
+  .rot-ini { order: 1; }
+  .rotulo { max-width: 6.5rem; }
+}
+</style>
+</head>
+<body>
+<main class="folha" id="app"></main>
+
+<script>
+/* =========================================================================
+   1. INSTRUMENTO
+   ========================================================================= */
+
+/*
+  Os dez itens, na ordem original de Brooke (1996).
+
+  A alternância é obrigatória: ímpares são afirmações positivas e pares são
+  negativas. É ela que permite detectar resposta automática e que a fórmula
+  de pontuação pressupõe. Reordenar ou tornar todos positivos invalida o
+  instrumento.
+
+  PENDÊNCIA (item 1 do checklist do card): a redação abaixo é tradução
+  própria, fiel aos itens originais, e não uma versão validada publicada.
+  Antes da coleta, a equipe precisa adotar uma tradução publicada e citá-la,
+  ou registrar a tradução própria como limitação na metodologia. A fórmula
+  não depende da redação, só da alternância, que está preservada.
+*/
+var ITENS = [
+  { id: 'q1',  pos: true,  texto: 'Eu acho que gostaria de usar este sistema com frequência.' },
+  { id: 'q2',  pos: false, texto: 'Considerei este sistema mais complexo do que o necessário.' },
+  { id: 'q3',  pos: true,  texto: 'Achei este sistema fácil de usar.' },
+  { id: 'q4',  pos: false, texto: 'Acho que precisaria da ajuda de uma pessoa com conhecimentos técnicos para conseguir usar este sistema.' },
+  { id: 'q5',  pos: true,  texto: 'Considerei que as várias funcionalidades deste sistema estavam bem integradas.' },
+  { id: 'q6',  pos: false, texto: 'Achei que havia inconsistências demais neste sistema.' },
+  { id: 'q7',  pos: true,  texto: 'Imagino que a maioria das pessoas aprenderia a usar este sistema rapidamente.' },
+  { id: 'q8',  pos: false, texto: 'Achei este sistema muito complicado de usar.' },
+  { id: 'q9',  pos: true,  texto: 'Senti-me confiante ao usar este sistema.' },
+  { id: 'q10', pos: false, texto: 'Precisei aprender muitas coisas antes de conseguir usar este sistema.' }
+];
+
+var ROTULO_MIN = 'Discordo totalmente';
+var ROTULO_MAX = 'Concordo totalmente';
+var VALORES = [1, 2, 3, 4, 5];
+var REFERENCIA = 68; // média da escala, parâmetro de interpretação
+
+/*
+  Pontuação (Brooke, 1996):
+    ímpares (positivos): contribuição = resposta - 1
+    pares   (negativos): contribuição = 5 - resposta
+    pontuação = soma x 2,5  ->  intervalo de 0 a 100
+*/
+function calcularPontuacao(respostas) {
+  var soma = 0;
+  for (var i = 0; i < ITENS.length; i++) {
+    var item = ITENS[i];
+    var valor = respostas[item.id];
+    if (VALORES.indexOf(valor) === -1) {
+      throw new Error('Resposta inválida ou ausente no item ' + item.id + ': ' + JSON.stringify(valor));
+    }
+    soma += item.pos ? (valor - 1) : (5 - valor);
+  }
+  return soma * 2.5;
+}
+
+function itensFaltando(respostas) {
+  return ITENS.filter(function (i) { return VALORES.indexOf(respostas[i.id]) === -1; })
+              .map(function (i) { return i.id; });
+}
+
+/* =========================================================================
+   2. COLETA (armazenamento e exportação)
+   -------------------------------------------------------------------------
+   Mesmo formato previsto para os outros três instrumentos do estudo, para
+   que todos possam ser exportados juntos pelo mesmo código de participante.
+   ========================================================================= */
+
+var CHAVE = 'upx08.coleta.v1';
+
+function listarRegistros() {
+  try {
+    var bruto = localStorage.getItem(CHAVE);
+    return bruto ? JSON.parse(bruto) : [];
+  } catch (e) {
+    // aba anônima ou cookies bloqueados: a sessão não pode parar por isso
+    return [];
+  }
+}
+
+function salvarRegistro(registro) {
+  try {
+    var registros = listarRegistros().filter(function (r) {
+      return !(r.participanteId === registro.participanteId &&
+               r.instrumento === registro.instrumento &&
+               r.momento === registro.momento);
+    });
+    registros.push(registro);
+    localStorage.setItem(CHAVE, JSON.stringify(registros));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function montarRegistro(dados) {
+  return {
+    instrumento: 'SUS',
+    momento: 'pos',
+    participanteId: dados.participanteId,
+    grupo: dados.grupo,
+    inicioEm: dados.inicioEm.toISOString(),
+    fimEm: dados.fimEm.toISOString(),
+    duracaoSegundos: Math.round((dados.fimEm - dados.inicioEm) / 1000),
+    // item a item, e não só o total: o total sozinho não permite reanálise
+    // nem identificar qual aspecto da interface gerou atrito
+    respostas: Object.assign({}, dados.respostas),
+    pontuacao: calcularPontuacao(dados.respostas)
+  };
+}
+
+function celulaCsv(valor) {
+  var t = (valor === null || valor === undefined) ? '' : String(valor);
+  return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+
+function montarCsv(registros) {
+  var sus = registros.filter(function (r) { return r.instrumento === 'SUS'; });
+  var cab = ['participante_id', 'grupo', 'inicio_em', 'fim_em', 'duracao_segundos'];
+  for (var i = 1; i <= 10; i++) cab.push('q' + i);
+  cab.push('pontuacao_sus');
+
+  var linhas = sus.map(function (r) {
+    var l = [r.participanteId, r.grupo, r.inicioEm, r.fimEm, r.duracaoSegundos];
+    for (var i = 1; i <= 10; i++) l.push(r.respostas['q' + i]);
+    l.push(r.pontuacao);
+    return l.map(celulaCsv);
+  });
+
+  return [cab].concat(linhas).map(function (l) { return l.join(','); }).join('\n');
+}
+
+function carimbo() {
+  return new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+}
+
+function baixar(nome, conteudo, tipo) {
+  var blob = new Blob([conteudo], { type: tipo + ';charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportarJson() {
+  baixar('upx08-coleta-' + carimbo() + '.json',
+         JSON.stringify(listarRegistros(), null, 2), 'application/json');
+}
+
+function exportarCsv() {
+  baixar('upx08-sus-' + carimbo() + '.csv', montarCsv(listarRegistros()), 'text/csv');
+}
+
+/* =========================================================================
+   3. CONFERÊNCIA DO CÁLCULO
+   -------------------------------------------------------------------------
+   Item 7 do checklist do card. Roda no navegador para que a correção da
+   fórmula possa ser demonstrada sem ferramenta externa.
+   ========================================================================= */
+
+function todosCom(v) {
+  var r = {};
+  ITENS.forEach(function (i) { r[i.id] = v; });
+  return r;
+}
+
+function melhorCaso() {
+  var r = {};
+  ITENS.forEach(function (i) { r[i.id] = i.pos ? 5 : 1; });
+  return r;
+}
+
+function piorCaso() {
+  var r = {};
+  ITENS.forEach(function (i) { r[i.id] = i.pos ? 1 : 5; });
+  return r;
+}
+
+function casoMisto() {
+  var r = {};
+  ITENS.forEach(function (i) { r[i.id] = i.pos ? 4 : 2; });
+  return r;
+}
+
+var CASOS = [
+  { nome: 'Melhor resposta possível', respostas: melhorCaso(), esperado: 100 },
+  { nome: 'Pior resposta possível',   respostas: piorCaso(),   esperado: 0 },
+  { nome: 'Tudo em 1',                respostas: todosCom(1),  esperado: 50 },
+  { nome: 'Tudo em 3',                respostas: todosCom(3),  esperado: 50 },
+  { nome: 'Tudo em 5',                respostas: todosCom(5),  esperado: 50 },
+  { nome: '4 nos positivos, 2 nos negativos', respostas: casoMisto(), esperado: 75 }
+];
+
+function rodarConferencia() {
+  return CASOS.map(function (c) {
+    var obtido;
+    try { obtido = calcularPontuacao(c.respostas); } catch (e) { obtido = 'erro'; }
+    return { nome: c.nome, esperado: c.esperado, obtido: obtido, ok: obtido === c.esperado };
+  });
+}
+
+/* =========================================================================
+   4. TELAS
+   ========================================================================= */
+
+var app = document.getElementById('app');
+
+var estado = {
+  tela: 'inicio',
+  participanteId: 'P01',
+  grupo: 'experimental',
+  mostrarPontuacao: false,
+  respostas: {},
+  tentouEnviar: false,
+  inicioEm: null,
+  registro: null,
+  erroAoGravar: false
+};
+
+function esc(t) {
+  return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;');
+}
+
+/* ---------- tela inicial ---------- */
+function telaInicio() {
+  var guardados = listarRegistros().filter(function (r) { return r.instrumento === 'SUS'; }).length;
+  var conf = rodarConferencia();
+  var todosOk = conf.every(function (c) { return c.ok; });
+
+  app.innerHTML =
+    '<h1>Questionário SUS</h1>' +
+    '<p class="suave">Projeto UPx08 / Conectway. Esta tela é aplicada ao final da sessão e ' +
+      'somente ao grupo experimental.</p>' +
+    '<p class="suave peq">Respostas de SUS já guardadas neste navegador: ' + guardados + '</p>' +
+
+    '<div class="campo">' +
+      '<label for="pid">Código do participante</label>' +
+      '<input type="text" id="pid" value="' + esc(estado.participanteId) + '" autocomplete="off">' +
+    '</div>' +
+
+    '<div class="campo">' +
+      '<label for="grp">Condição experimental</label>' +
+      '<select id="grp">' +
+        '<option value="experimental"' + (estado.grupo === 'experimental' ? ' selected' : '') + '>Realidade aumentada (responde o SUS)</option>' +
+        '<option value="controle"' + (estado.grupo === 'controle' ? ' selected' : '') + '>Bidimensional (não responde)</option>' +
+      '</select>' +
+    '</div>' +
+
+    '<div class="linha-check">' +
+      '<input type="checkbox" id="pts"' + (estado.mostrarPontuacao ? ' checked' : '') + '>' +
+      '<label for="pts" style="font-weight:400;margin:0">Mostrar a pontuação ao final ' +
+        '<span class="suave peq">(só para conferência da equipe)</span></label>' +
+    '</div>' +
+
+    '<div class="acoes"><button class="cheio" id="abrir">Abrir o questionário</button></div>' +
+
+    '<div class="acoes">' +
+      '<button id="exp-json">Exportar JSON</button>' +
+      '<button id="exp-csv">Exportar CSV</button>' +
+    '</div>' +
+
+    '<div class="conferencia">' +
+      '<strong>Conferência do cálculo</strong>' +
+      '<p class="suave peq" style="margin:.3rem 0 0">Casos de pontuação conhecida, verificados agora neste navegador.</p>' +
+      '<table>' +
+        conf.map(function (c) {
+          return '<tr><td>' + esc(c.nome) + '</td>' +
+                 '<td class="' + (c.ok ? 'passou' : 'falhou') + '">' +
+                 c.obtido + (c.ok ? ' ✓' : ' (esperado ' + c.esperado + ') ✗') + '</td></tr>';
+        }).join('') +
+      '</table>' +
+      '<p class="peq ' + (todosOk ? 'passou' : 'falhou') + '" style="margin:.6rem 0 0">' +
+        (todosOk ? 'Os ' + conf.length + ' casos conferem.' : 'Há casos divergentes.') +
+      '</p>' +
+    '</div>';
+
+  document.getElementById('pid').addEventListener('input', function (e) {
+    estado.participanteId = e.target.value;
+  });
+  document.getElementById('grp').addEventListener('change', function (e) {
+    estado.grupo = e.target.value;
+  });
+  document.getElementById('pts').addEventListener('change', function (e) {
+    estado.mostrarPontuacao = e.target.checked;
+  });
+  document.getElementById('abrir').addEventListener('click', function () {
+    if (!estado.participanteId.trim()) {
+      alert('Informe o código do participante.');
+      return;
+    }
+    estado.respostas = {};
+    estado.tentouEnviar = false;
+    estado.registro = null;
+    estado.erroAoGravar = false;
+    estado.inicioEm = new Date();
+    estado.tela = 'questionario';
+    render();
+  });
+  document.getElementById('exp-json').addEventListener('click', exportarJson);
+  document.getElementById('exp-csv').addEventListener('click', exportarCsv);
+}
+
+/* ---------- questionário ---------- */
+function telaQuestionario() {
+  // Guarda do item 11 do checklist. No app, a rota também deve impedir a
+  // chegada aqui; esta é a segunda barreira.
+  if (estado.grupo !== 'experimental') {
+    app.innerHTML =
+      '<h1>Questionário não aplicável</h1>' +
+      '<p>Este questionário é aplicado somente ao grupo experimental, porque avalia a ' +
+        'usabilidade da aplicação de realidade aumentada. Nada foi registrado.</p>' +
+      '<div class="acoes"><button id="voltar">Voltar</button></div>';
+    document.getElementById('voltar').addEventListener('click', function () {
+      estado.tela = 'inicio'; render();
+    });
+    return;
+  }
+
+  var faltando = itensFaltando(estado.respostas);
+
+  app.innerHTML =
+    '<h1>Questionário de usabilidade</h1>' +
+    '<p class="suave">Indique o quanto concorda com cada afirmação sobre a aplicação que ' +
+      'você acabou de usar. Não há resposta certa ou errada.</p>' +
+    '<p class="suave peq">Participante: ' + esc(estado.participanteId) + '</p>' +
+
+    '<ol class="itens">' +
+      ITENS.map(function (item, indice) {
+        var emBranco = estado.tentouEnviar && faltando.indexOf(item.id) !== -1;
+        return '' +
+          '<li class="item' + (emBranco ? ' pendente' : '') + '" id="item-' + item.id + '">' +
+            '<fieldset>' +
+              '<legend><span class="numero">' + (indice + 1) + '.</span> ' + esc(item.texto) + '</legend>' +
+              '<div class="escala" role="radiogroup">' +
+                '<span class="rotulo rot-ini">' + ROTULO_MIN + '</span>' +
+                '<div class="opcoes">' +
+                  VALORES.map(function (v) {
+                    // nenhuma opção vem pré-selecionada: um padrão no 3 faria
+                    // quem não respondeu gerar pontuação 50, que parece
+                    // resultado válido e não é
+                    var marcado = estado.respostas[item.id] === v ? ' checked' : '';
+                    return '<label class="opcao">' +
+                             '<input type="radio" name="' + item.id + '" value="' + v + '"' + marcado +
+                             ' aria-label="' + esc(item.texto) + ' Nota ' + v + ' de 5.">' +
+                             '<span class="bolha">' + v + '</span>' +
+                           '</label>';
+                  }).join('') +
+                '</div>' +
+                '<span class="rotulo rot-fim">' + ROTULO_MAX + '</span>' +
+              '</div>' +
+              (emBranco ? '<p class="aviso" role="alert">Responda este item para continuar.</p>' : '') +
+            '</fieldset>' +
+          '</li>';
+      }).join('') +
+    '</ol>' +
+
+    '<div class="rodape">' +
+      (estado.tentouEnviar && faltando.length
+        ? '<p class="aviso" role="alert">Faltam ' + faltando.length + ' ' +
+          (faltando.length === 1 ? 'item' : 'itens') + ' para responder.</p>'
+        : '') +
+      '<p class="progresso" aria-live="polite">' + (10 - faltando.length) + ' de 10 respondidos</p>' +
+      // o botão não é desabilitado de propósito: desabilitado, o participante
+      // não descobre por que não consegue enviar
+      '<button class="cheio" id="concluir">Concluir</button>' +
+    '</div>';
+
+  Array.prototype.forEach.call(app.querySelectorAll('input[type="radio"]'), function (el) {
+    el.addEventListener('change', function () {
+      estado.respostas[el.name] = Number(el.value);
+      render({ manterPosicao: true });
+    });
+  });
+
+  document.getElementById('concluir').addEventListener('click', function () {
+    estado.tentouEnviar = true;
+    var faltam = itensFaltando(estado.respostas);
+
+    if (faltam.length) {
+      render({ manterPosicao: true });
+      var alvo = document.getElementById('item-' + faltam[0]);
+      if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    var registro = montarRegistro({
+      participanteId: estado.participanteId,
+      grupo: estado.grupo,
+      respostas: estado.respostas,
+      inicioEm: estado.inicioEm,
+      fimEm: new Date()
+    });
+
+    estado.erroAoGravar = !salvarRegistro(registro);
+    estado.registro = registro;
+    estado.tela = 'final';
+    render();
+  });
+}
+
+/* ---------- tela final ---------- */
+function telaFinal() {
+  var r = estado.registro;
+
+  app.innerHTML =
+    '<h1>Questionário concluído</h1>' +
+    '<p>Obrigado. As respostas do participante <strong>' + esc(r.participanteId) +
+      '</strong> foram registradas.</p>' +
+
+    // a pontuação fica oculta por padrão: mostrar o número a quem acabou de
+    // responder pode influenciar os comentários coletados em seguida, que
+    // entram na parte qualitativa
+    (estado.mostrarPontuacao
+      ? '<p class="pontuacao">Pontuação SUS: <strong>' + r.pontuacao.toFixed(1) + '</strong> ' +
+        '<span class="ref">(referência da escala: ' + REFERENCIA + ')</span></p>'
+      : '') +
+
+    (estado.erroAoGravar
+      ? '<p class="aviso" role="alert">Não foi possível gravar no armazenamento local do ' +
+        'navegador. Exporte os dados agora, antes de fechar esta tela.</p>'
+      : '') +
+
+    '<div class="acoes">' +
+      '<button id="exp-json">Exportar JSON</button>' +
+      '<button id="exp-csv">Exportar CSV</button>' +
+    '</div>' +
+    '<div class="acoes"><button id="nova">Nova sessão</button></div>';
+
+  document.getElementById('exp-json').addEventListener('click', exportarJson);
+  document.getElementById('exp-csv').addEventListener('click', exportarCsv);
+  document.getElementById('nova').addEventListener('click', function () {
+    estado.tela = 'inicio'; render();
+  });
+}
+
+/* ---------- render ---------- */
+function render(opcoes) {
+  var y = (opcoes && opcoes.manterPosicao) ? window.scrollY : 0;
+  if (estado.tela === 'inicio') telaInicio();
+  else if (estado.tela === 'questionario') telaQuestionario();
+  else telaFinal();
+  window.scrollTo(0, y);
+}
+
+render();
+</script>
+</body>
+</html>
