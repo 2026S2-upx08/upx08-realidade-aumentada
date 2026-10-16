@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "models": "node scripts/optimize-models.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,12 +21,18 @@
     "three": "^0.186.1"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "4.5.1",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@gltf-transform/functions": "4.5.1",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^4.7.0",
+    "meshoptimizer": "1.1.1",
     "oxlint": "^1.81.0",
+    "sharp": "0.35.5",
     "typescript": "~6.0.2",
     "vite": "^6.4.3"
   }
