@@ -25,9 +25,9 @@ const HUMAN_GAP_M = 0.3
 // Contador de FPS para o teste do RNF04, ativado abrindo o app com ?fps
 const SHOW_FPS = new URLSearchParams(window.location.search).has('fps')
 
-// Fator único: o maior eixo real da estrutura passa a medir sizeM
+// Fator único: a altura real da estrutura passa a medir sizeM
 function getScale(structure: StructureId, sizeM: number) {
-  return sizeM / Math.max(...STRUCTURES[structure].sizeM)
+  return sizeM / STRUCTURES[structure].sizeM[1]
 }
 
 function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
