@@ -51,14 +51,10 @@ A envergadura do Cristo fica 5% acima da real por causa da proporção do modelo
 
 ## Uso no app
 
-Como todos os modelos estão em metros, um único fator de escala serve para a estrutura e para a figura humana:
+Como todos os modelos estão em metros, o fator de escala da estrutura é:
 
 ```
 fator = tamanho da maquete (m) / maior eixo real da estrutura (m)
 ```
 
-| Estrutura | Maior eixo | Figura humana com maquete de 2,25 m |
-|---|---|---|
-| Coliseu | 187 m (comprimento) | 2,0 cm |
-| Estátua da Liberdade | 46 m (altura) | 8,3 cm |
-| Cristo Redentor | 38 m (altura) | 10,1 cm |
+A figura humana não recebe esse fator: fica sempre com 1,70 m reais, ao lado da maquete, como referência visual. Em escala proporcional ela ficaria pequena demais (cerca de 2 cm no Coliseu com maquete de 2,25 m). Decisão do time registrada na #40, divergente do RF12/RNF03 do artigo.
