@@ -22,6 +22,9 @@ const DEFAULT_STRUCTURE: StructureId = 'coliseu'
 const HUMAN_HALF_WIDTH_M = 0.3
 const HUMAN_GAP_M = 0.3
 
+// Contador de FPS para o teste do RNF04, ativado abrindo o app com ?fps
+const SHOW_FPS = new URLSearchParams(window.location.search).has('fps')
+
 // Fator único: o maior eixo real da estrutura passa a medir sizeM
 function getScale(structure: StructureId, sizeM: number) {
   return sizeM / Math.max(...STRUCTURES[structure].sizeM)
@@ -67,6 +70,23 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   )
 }
 
+function FpsMeter({ onUpdate }: { onUpdate: (fps: number) => void }) {
+  const frames = useRef(0)
+  const startedAt = useRef(performance.now())
+
+  useFrame(() => {
+    frames.current += 1
+    const elapsed = performance.now() - startedAt.current
+    if (elapsed >= 500) {
+      onUpdate(Math.round((frames.current * 1000) / elapsed))
+      frames.current = 0
+      startedAt.current = performance.now()
+    }
+  })
+
+  return null
+}
+
 function AnchoredModel({
   position,
   structure,
@@ -93,16 +113,19 @@ function AnchoredModel({
 function SizeControl({
   sizeM,
   scale,
+  fps,
   onChange,
 }: {
   sizeM: number
   scale: number
+  fps: number | null
   onChange: (value: number) => void
 }) {
   return (
     <IfInSessionMode allow="immersive-ar">
       <XRDomOverlay>
         <div className="absolute bottom-6 left-1/2 w-64 -translate-x-1/2 rounded-md bg-white/90 p-3 text-center text-sm shadow-md">
+          {fps !== null && <div className="mb-1 text-xs font-medium">{fps} fps</div>}
           <div className="mb-1 flex justify-between text-xs text-gray-600">
             <span>{MIN_SIZE_M} m</span>
             <span>
@@ -129,6 +152,7 @@ export default function App() {
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
   const structure = DEFAULT_STRUCTURE
+  const [fps, setFps] = useState<number | null>(null)
 
   return (
     <>
@@ -144,6 +168,7 @@ export default function App() {
           <ambientLight intensity={1} />
           <directionalLight position={[1, 2, 1]} />
           <Reticle onSelect={setAnchoredAt} />
+          {SHOW_FPS && <FpsMeter onUpdate={setFps} />}
           {anchoredAt && (
             <Suspense fallback={null}>
               <AnchoredModel position={anchoredAt} structure={structure} sizeM={sizeM} />
@@ -152,6 +177,7 @@ export default function App() {
           <SizeControl
             sizeM={sizeM}
             scale={getScale(structure, sizeM)}
+            fps={fps}
             onChange={setSizeM}
           />
         </XR>
