@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import {
   XR,
@@ -9,15 +9,23 @@ import {
   XRDomOverlay,
 } from '@react-three/xr'
 import { Matrix4, Vector3, type Group } from 'three'
+import { HumanFigure, STRUCTURES, Structure, type StructureId } from './structures'
 
 const store = createXRStore({ hitTest: true, domOverlay: true })
 
 const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
+const DEFAULT_STRUCTURE: StructureId = 'coliseu'
 
-const HUMAN_HEIGHT_M = 1.7
-const HUMAN_RADIUS_M = 0.15
+// Figura humana fica em 1,70 m reais, fora da escala da maquete (decisão da #40)
+const HUMAN_HALF_WIDTH_M = 0.3
+const HUMAN_GAP_M = 0.3
+
+// Fator único: o maior eixo real da estrutura passa a medir sizeM
+function getScale(structure: StructureId, sizeM: number) {
+  return sizeM / Math.max(...STRUCTURES[structure].sizeM)
+}
 
 function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   const ref = useRef<Group>(null)
@@ -59,30 +67,36 @@ function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
   )
 }
 
-function AnchoredModel({ position, sizeM }: { position: Vector3; sizeM: number }) {
-  const monumentHalfWidth = (sizeM * 0.4) / 2
-  const humanX = monumentHalfWidth + 0.3 + HUMAN_RADIUS_M
+function AnchoredModel({
+  position,
+  structure,
+  sizeM,
+}: {
+  position: Vector3
+  structure: StructureId
+  sizeM: number
+}) {
+  const scale = getScale(structure, sizeM)
+  const structureHalfWidth = (STRUCTURES[structure].sizeM[0] * scale) / 2
+  const humanX = structureHalfWidth + HUMAN_GAP_M + HUMAN_HALF_WIDTH_M
 
   return (
     <group position={position}>
-      <mesh position-y={sizeM / 2} scale={[sizeM * 0.4, sizeM, sizeM * 0.4]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      <mesh position={[humanX, HUMAN_HEIGHT_M / 2, 0]}>
-        <cylinderGeometry args={[HUMAN_RADIUS_M, HUMAN_RADIUS_M, HUMAN_HEIGHT_M, 8]} />
-        <meshStandardMaterial color="dodgerblue" />
-      </mesh>
+      <Structure id={structure} scale={scale} />
+      <group position-x={humanX}>
+        <HumanFigure />
+      </group>
     </group>
   )
 }
 
 function SizeControl({
   sizeM,
+  scale,
   onChange,
 }: {
   sizeM: number
+  scale: number
   onChange: (value: number) => void
 }) {
   return (
@@ -91,7 +105,9 @@ function SizeControl({
         <div className="absolute bottom-6 left-1/2 w-64 -translate-x-1/2 rounded-md bg-white/90 p-3 text-center text-sm shadow-md">
           <div className="mb-1 flex justify-between text-xs text-gray-600">
             <span>{MIN_SIZE_M} m</span>
-            <span>{sizeM.toFixed(1)} m</span>
+            <span>
+              {sizeM.toFixed(1)} m · 1:{Math.round(1 / scale)}
+            </span>
             <span>{MAX_SIZE_M} m</span>
           </div>
           <input
@@ -112,6 +128,7 @@ function SizeControl({
 export default function App() {
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
+  const structure = DEFAULT_STRUCTURE
 
   return (
     <>
@@ -127,8 +144,16 @@ export default function App() {
           <ambientLight intensity={1} />
           <directionalLight position={[1, 2, 1]} />
           <Reticle onSelect={setAnchoredAt} />
-          {anchoredAt && <AnchoredModel position={anchoredAt} sizeM={sizeM} />}
-          <SizeControl sizeM={sizeM} onChange={setSizeM} />
+          {anchoredAt && (
+            <Suspense fallback={null}>
+              <AnchoredModel position={anchoredAt} structure={structure} sizeM={sizeM} />
+            </Suspense>
+          )}
+          <SizeControl
+            sizeM={sizeM}
+            scale={getScale(structure, sizeM)}
+            onChange={setSizeM}
+          />
         </XR>
       </Canvas>
     </>
