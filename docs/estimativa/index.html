@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estimativa de dimensões - Conectway</title>
+<style>
+  :root{
+    --tinta:#111c2b; --papel:#ffffff; --fundo:#f4f2ef; --linha:#dcd7d0;
+    --acento:#b0543f; --acento-claro:#f6ece9; --texto-fraco:#5d6670;
+    --ok:#2f6b4f; --alerta:#9c3b2a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--fundo); color:var(--tinta);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    padding:0 0 96px;
+  }
+  .caixa{max-width:720px;margin:0 auto;padding:0 16px}
+  header{background:var(--tinta);color:#fff;padding:20px 0 18px;margin-bottom:20px}
+  h1{font-size:20px;margin:0 0 4px;letter-spacing:.2px}
+  header p{margin:0;font-size:13px;color:#c5ccd4}
+  .cartao{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:18px;margin-bottom:14px}
+  label.campo{display:block;font-size:13px;font-weight:600;margin:0 0 6px;color:var(--texto-fraco)}
+  input[type=text],select{
+    width:100%;padding:12px;border:1px solid var(--linha);border-radius:8px;
+    font-size:16px;background:var(--papel);color:var(--tinta)
+  }
+  .linha2{display:flex;gap:12px;flex-wrap:wrap}
+  .linha2>div{flex:1 1 180px}
+  button{font:inherit;font-weight:600;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:13px 18px;min-height:46px}
+  .primario{background:var(--acento);color:#fff;width:100%}
+  .secundario{background:var(--papel);color:var(--tinta);border-color:var(--linha)}
+  .barra-acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .barra-acoes button{flex:1 1 140px}
+
+  /* padding igual em todos os estados: o destaque de pendente não pode mudar
+     a altura do bloco, senão o conteúdo abaixo pula a cada toque */
+  .medida{border-top:1px solid var(--linha);padding:18px 12px;margin:0 -12px;border-radius:8px}
+  .medida:first-of-type{border-top:0;padding-top:4px}
+  .medida.pendente{background:#fdf6f4}
+  .medida.pendente .num{background:var(--alerta)}
+  .enun{font-weight:600;margin:0 0 4px;display:flex;gap:10px;align-items:flex-start}
+  .num{flex:0 0 26px;height:26px;border-radius:50%;background:var(--tinta);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .detalhe{margin:0 0 10px 36px;font-size:13px;color:var(--texto-fraco)}
+  .entrada{display:flex;align-items:center;gap:10px;margin-left:36px}
+  .entrada input{max-width:200px;font-size:18px;text-align:right}
+  .entrada .un{font-weight:600;color:var(--texto-fraco)}
+  .erro-campo{margin:6px 0 0 36px;font-size:13px;color:var(--alerta)}
+  .progresso{position:fixed;left:0;right:0;bottom:0;background:var(--papel);border-top:1px solid var(--linha);padding:10px 0 14px}
+  .progresso .caixa{display:flex;gap:12px;align-items:center}
+  .progresso span{font-size:13px;color:var(--texto-fraco);white-space:nowrap}
+  .progresso button{flex:1}
+  .aviso{color:var(--alerta);font-size:14px;margin:10px 0 0}
+  .peq{font-size:13px;color:var(--texto-fraco)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+  td,th{text-align:left;padding:5px 6px;border-bottom:1px solid var(--linha)}
+  .ok{color:var(--ok);font-weight:600}
+  .ruim{color:var(--alerta);font-weight:600}
+  .oculto{display:none}
+  .destaque{font-size:30px;font-weight:700;margin:6px 0}
+</style>
+</head>
+<body>
+
+<header><div class="caixa">
+  <h1>Estimativa de dimensões</h1>
+  <p id="sub">Conectway · UPx08</p>
+</div></header>
+
+<main class="caixa">
+
+  <section id="telaInicio">
+    <div class="cartao">
+      <p class="peq" style="margin-top:0">Preenchido pelo pesquisador antes de entregar o aparelho ao participante.</p>
+      <div class="linha2">
+        <div>
+          <label class="campo" for="pid">Código do participante</label>
+          <input type="text" id="pid" placeholder="P01" autocomplete="off">
+        </div>
+        <div>
+          <label class="campo" for="grp">Grupo</label>
+          <select id="grp">
+            <option value="experimental">Experimental (RA)</option>
+            <option value="controle">Controle (bidimensional)</option>
+          </select>
+        </div>
+        <div>
+          <label class="campo" for="mom">Momento</label>
+          <select id="mom">
+            <option value="pre">Pré-teste</option>
+            <option value="pos">Pós-teste</option>
+          </select>
+        </div>
+      </div>
+      <p class="peq" style="margin-bottom:0">
+        <label><input type="checkbox" id="verErro"> Exibir os erros ao final (conferência da equipe, não usar com participante)</label>
+      </p>
+      <div class="barra-acoes"><button class="primario" id="abrir">Iniciar</button></div>
+      <p id="avisoInicio" class="aviso oculto"></p>
+    </div>
+
+    <div class="cartao">
+      <strong>Registros neste aparelho</strong>
+      <div id="resumo" class="peq"></div>
+    </div>
+  </section>
+
+  <section id="telaForm" class="oculto">
+    <div class="cartao">
+      <p class="peq" style="margin:0">
+        Informe cada medida em metros, do jeito que você imagina. Não existe consulta
+        e não há resposta certa visível: é a sua estimativa que interessa.
+      </p>
+    </div>
+    <div class="cartao" id="medidas"></div>
+  </section>
+
+  <section id="telaFim" class="oculto">
+    <div class="cartao">
+      <h2 style="margin-top:0;font-size:18px">Respostas registradas</h2>
+      <p class="peq">Pode devolver o aparelho ao pesquisador.</p>
+      <div id="blocoErro" class="oculto">
+        <div class="destaque" id="erroTxt"></div>
+        <div id="detalheErro"></div>
+      </div>
+      <div class="barra-acoes"><button class="secundario" id="voltarInicio">Voltar ao início</button></div>
+    </div>
+  </section>
+
+</main>
+
+<div class="progresso oculto" id="rodape"><div class="caixa">
+  <span id="contador">0 de 4</span>
+  <button class="primario" id="concluir">Concluir</button>
+</div></div>
+
+<script>
+/* ============================================================
+   Tarefa de estimativa de dimensões (RQ1, RF07, RF11)
+   Seção 3.4 do artigo: altura das três estruturas e comprimento do Coliseu,
+   únicas medidas com valor de referência documentado em fonte citada.
+   Métrica: erro percentual absoluto em relação ao valor de referência.
+   Os valores de referência NUNCA são exibidos ao participante.
+   Arquivo único, sem dependências, abre direto (file://).
+   ============================================================ */
+
+var MEDIDAS = [
+  { id:'m1', estrutura:'Coliseu',
+    pergunta:'Qual é a altura do Coliseu?',
+    detalhe:'Do chão até o topo da fachada externa.',
+    referencia:45, fonte:'LANCASTER, 2005' },
+
+  { id:'m2', estrutura:'Coliseu',
+    pergunta:'Qual é o comprimento do Coliseu?',
+    detalhe:'A maior distância de um lado ao outro, vista de cima.',
+    referencia:187, fonte:'LANCASTER, 2005' },
+
+  { id:'m3', estrutura:'Estátua da Liberdade',
+    pergunta:'Qual é a altura da Estátua da Liberdade?',
+    detalhe:'Apenas a estátua, sem contar o pedestal.',
+    referencia:46, fonte:'NIST, 2017; ASCE METROPOLITAN SECTION, [s.d.]' },
+
+  { id:'m4', estrutura:'Cristo Redentor',
+    pergunta:'Qual é a altura do Cristo Redentor?',
+    detalhe:'A altura total, somando a estátua e o pedestal.',
+    referencia:38, fonte:'IPHAN, [s.d.]' }
+];
+
+var CHAVE = 'upx08.coleta.v1'; // mesmo armazenamento do SUS e do questionário
+
+/* ---------- cálculo ---------- */
+
+/** Converte o texto digitado em número. Aceita vírgula e ponto como decimal.
+ *  Devolve null quando não é um número positivo válido. */
+function lerNumero(texto){
+  if (typeof texto !== 'string') return null;
+  var t = texto.trim().replace(/\s/g, '');
+  if (t === '') return null;
+  t = t.replace(',', '.');
+  if (!/^\d+(\.\d+)?$/.test(t)) return null;   // recusa sinal, letras e notação estranha
+  var n = parseFloat(t);
+  if (!isFinite(n) || n <= 0) return null;     // zero e negativo não são estimativas válidas
+  return n;
+}
+
+/* ---------- armazenamento ---------- */
+
+/* ---------- tela ---------- */
+
+var el = function(id){ return document.getElementById(id); };
+var sessao = null;
+
+function desenharMedidas(){
+  var html = '';
+  for (var i = 0; i < MEDIDAS.length; i++){
+    var m = MEDIDAS[i];
+    html += '<div class="medida" id="bloco-' + m.id + '">';
+    html += '<p class="enun"><span class="num">' + (i + 1) + '</span><span>' + m.pergunta + '</span></p>';
+    html += '<p class="detalhe">' + m.detalhe + '</p>';
+    // sem placeholder numérico, sem slider e sem faixa sugerida: qualquer número
+    // exibido ancoraria a estimativa e contaminaria a medida da RQ1
+    html += '<div class="entrada"><input type="text" inputmode="decimal" autocomplete="off" ' +
+            'id="in-' + m.id + '" aria-label="' + m.pergunta + '"><span class="un">metros</span></div>';
+    html += '<p class="erro-campo oculto" id="err-' + m.id + '"></p>';
+    html += '</div>';
+  }
+  el('medidas').innerHTML = html;
+
+  for (var k = 0; k < MEDIDAS.length; k++){
+    (function(id){
+      el('in-' + id).addEventListener('input', function(){
+        el('bloco-' + id).classList.remove('pendente');
+        el('err-' + id).classList.add('oculto');
+        atualizarContador();
+      });
+    })(MEDIDAS[k].id);
+  }
+}
+
+function valoresAtuais(){
+  var out = {};
+  for (var i = 0; i < MEDIDAS.length; i++){
+    var n = lerNumero(el('in-' + MEDIDAS[i].id).value);
+    if (n !== null) out[MEDIDAS[i].id] = n;
+  }
+  return out;
+}
+
+function atualizarContador(){
+  el('contador').textContent = Object.keys(valoresAtuais()).length + ' de ' + MEDIDAS.length;
+}
+
+function mostrar(tela){
+  el('telaInicio').classList.toggle('oculto', tela !== 'inicio');
+  el('telaForm').classList.toggle('oculto', tela !== 'form');
+  el('telaFim').classList.toggle('oculto', tela !== 'fim');
+  el('rodape').classList.toggle('oculto', tela !== 'form');
+  window.scrollTo(0, 0);
+}
+
+function atualizarResumo(){
+  el('resumo').textContent = 'Gravação de registros entra no próximo commit.';
+}
+
+/* ---------- eventos ---------- */
+
+el('abrir').addEventListener('click', function(){
+  var pid = el('pid').value.trim();
+  var aviso = el('avisoInicio');
+  if (!pid){
+    aviso.textContent = 'Informe o código do participante antes de iniciar.';
+    aviso.classList.remove('oculto'); el('pid').focus(); return;
+  }
+  var momento = el('mom').value;
+  aviso.classList.add('oculto');
+  sessao = {
+    participanteId: pid, grupo: el('grp').value, momento: momento,
+    verErro: el('verErro').checked, inicioEm: new Date()
+  };
+  el('sub').textContent = pid + ' · ' + sessao.grupo + ' · ' + (momento === 'pre' ? 'pré-teste' : 'pós-teste');
+  desenharMedidas();
+  atualizarContador();
+  mostrar('form');
+});
+
+el('concluir').addEventListener('click', function(){
+  // nesta etapa a tela apenas avanca: validacao, calculo e gravacao vem no proximo commit
+  mostrar('fim');
+});
+
+el('voltarInicio').addEventListener('click', function(){
+  sessao = null; el('pid').value = '';
+  el('sub').textContent = 'Conectway · UPx08';
+  atualizarResumo(); mostrar('inicio');
+});
+
+atualizarResumo();
+</script>
+</body>
+</html>
