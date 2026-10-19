@@ -1,4 +1,4 @@
-# Conect Way - Realidade Aumentada para Monumentos Histórico-Culturais
+# Realidade Aumentada para Monumentos Histórico-Culturais
 
 > Aplicação móvel de realidade aumentada que representa a escala e o processo construtivo do Coliseu, da Estátua da Liberdade e do Cristo Redentor, comparando seu efeito na compreensão desses aspectos com o de representações bidimensionais.
 
@@ -11,22 +11,22 @@
 
 ## 1. Identificação do Projeto
 
-| Item            | Informação                                                           |
-| --------------- | -------------------------------------------------------------------- |
-| **Projeto**     | Conect Way - Realidade Aumentada para Monumentos Histórico-Culturais |
-| **Equipe**      | Conect Way                                                           |
-| **Curso**       | Engenharia de Computação                                             |
-| **Disciplina**  | UPx08 - Realidade Aumentada                                          |
-| **Professor**   | Daniel Ohata                                                         |
-| **Instituição** | Centro Universitário Facens, Sorocaba, SP                            |
-| **Semestre**    | 8º semestre, 2026                                                    |
+| Item            | Informação                                              |
+| --------------- | ------------------------------------------------------- |
+| **Projeto**     | Realidade Aumentada para Monumentos Histórico-Culturais |
+| **Equipe**      | Conect Way                                              |
+| **Curso**       | Engenharia de Computação                                |
+| **Disciplina**  | UPx08 - Realidade Aumentada                             |
+| **Professor**   | Daniel Ohata                                            |
+| **Instituição** | Centro Universitário Facens, Sorocaba, SP               |
+| **Semestre**    | 8º semestre, 2026                                       |
 
 ### Integrantes
 
 | Nome                           | RA     | Responsabilidade técnica                                                                              |
 | ------------------------------ | ------ | ----------------------------------------------------------------------------------------------------- |
-| Gabriel Ferreira do Nascimento | 236085 | Configuração do projeto, implementação da ancoragem e do ajuste de escala do modelo, deploy na Vercel |
 | Bruno da Silveira Escanhoela   | 236793 | Pesquisa, licenciamento e otimização dos modelos 3D, validação de campo do rastreamento WebXR         |
+| Gabriel Ferreira do Nascimento | 236085 | Configuração do projeto, implementação da ancoragem e do ajuste de escala do modelo, deploy na Vercel |
 | João Guilherme Volta Kinol     | 235255 | Implementação dos instrumentos de avaliação (questionário SUS e questionário de compreensão)          |
 
 ---
@@ -76,3 +76,42 @@ Desenvolver uma aplicação móvel de realidade aumentada que represente a escal
 O público-alvo descrito na pesquisa que motiva o projeto é o de estudantes do Ensino Fundamental, no contexto do ensino de patrimônio cultural material. Esse público não exige familiaridade técnica prévia: a aplicação foi pensada para rodar em smartphones Android comuns, sem necessidade de instalar nenhum aplicativo além do navegador.
 
 Nesta etapa do projeto, por restrição de escopo (ausência de aprovação ética e de acesso formal a instituições de ensino básico), os testes e validações do protótipo são conduzidos com usuários proxy: colegas de curso recrutados por conveniência, não pertencentes à população-alvo original. Essa limitação está detalhada na seção 24 (Limitações Conhecidas).
+
+---
+
+## 6. Funcionalidades
+
+| ID   | Funcionalidade                      | Descrição                                                                                                                          | Status |
+| ---- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| RF01 | Ancorar o modelo tridimensional     | Ancora o modelo da estrutura selecionada sobre um plano detectado no ambiente físico, via WebXR hit-test, em modo maquete          | ✅     |
+| RF02 | Ajustar o tamanho do modelo         | Permite ajustar o tamanho do modelo ancorado entre 1 e 4 metros no maior eixo, calculado a partir da altura real de cada estrutura | ✅     |
+| RF03 | Apresentar a estrutura da vez       | Apresenta cada estrutura (Coliseu, Estátua da Liberdade, Cristo Redentor) na ordem contrabalanceada definida pelo sistema          | ⬜     |
+| RF04 | Navegar pelas etapas construtivas   | Permite avançar e retroceder entre as etapas do processo construtivo, mantendo o modelo ancorado                                   | ⬜     |
+| RF05 | Exibir overlay informativo          | Exibe painel com texto e imagens de referência sobre a etapa construtiva em exibição                                               | ⬜     |
+| RF06 | Apresentar modo bidimensional       | Apresenta, ao grupo de controle, o mesmo conteúdo em formato de imagem plana, sem o modelo 3D                                      | ⬜     |
+| RF07 | Aplicar tarefa de estimativa        | Coleta a estimativa de dimensões e proporções de cada estrutura, antes e depois do uso                                             | ⬜     |
+| RF08 | Aplicar tarefa de ordenação         | Apresenta as etapas construtivas embaralhadas para o participante reordenar                                                        | ⬜     |
+| RF09 | Aplicar questionário de compreensão | Questionário de compreensão sobre o processo construtivo, em formato pré-teste e pós-teste                                         | 🚧     |
+| RF10 | Aplicar questionário SUS            | Questionário de usabilidade (SUS), aplicado apenas ao grupo experimental                                                           | 🚧     |
+| RF11 | Registrar e exportar dados          | Registra as respostas e interações da sessão, exportando em JSON e CSV                                                             | ⬜     |
+| RF12 | Exibir figura humana de referência  | Exibe uma figura humana em escala real (1,70 m) ao lado do modelo ancorado, como referência visual de tamanho                      | ✅     |
+
+**Legenda:** ✅ Implementado · 🚧 Em desenvolvimento · ⬜ Planejado · ❌ Cancelado
+
+> RF09 e RF10 estão implementados como protótipos HTML isolados (`docs/index.html` e `docs/compreensao/index.html`), ainda não conectados ao fluxo principal da aplicação. A integração ao app React é o objetivo da task "Integrar instrumentos de avaliação ao fluxo do protótipo".
+
+---
+
+## 7. Requisitos Não Funcionais
+
+| ID    | Categoria              | Requisito                                                                                                                     |
+| ----- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| RNF01 | Plataforma             | A aplicação deve ser executada em navegador Android com suporte à WebXR Device API e ao ARCore, sem necessidade de instalação |
+| RNF02 | Estabilidade           | O modelo ancorado deve permanecer fixo no plano detectado, sem deslocamento perceptível durante a sessão                      |
+| RNF03 | Fidelidade dimensional | Os modelos devem preservar as proporções reais entre si em qualquer tamanho ajustado                                          |
+| RNF04 | Desempenho             | Taxa mínima de 30 quadros por segundo e carregamento de cada modelo em até 10 segundos                                        |
+| RNF05 | Ambiente               | Sessões em ambiente interno, com iluminação artificial uniforme e superfície horizontal texturizada                           |
+| RNF06 | Usabilidade            | Usabilidade avaliada via System Usability Scale (SUS), com referência de 68 pontos                                            |
+| RNF07 | Equivalência           | Os modos de RA e bidimensional devem rodar na mesma aplicação e dispositivo, com o mesmo conteúdo e tempo de exposição        |
+| RNF08 | Disponibilidade        | Aplicação acessível via URL com HTTPS; dados armazenados localmente até a exportação                                          |
+| RNF09 | Privacidade            | Participantes identificados apenas por código, sem dado pessoal identificável registrado                                      |
