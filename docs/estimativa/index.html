@@ -104,6 +104,12 @@
     <div class="cartao">
       <strong>Registros neste aparelho</strong>
       <div id="resumo" class="peq"></div>
+      <div class="barra-acoes">
+        <button class="secundario" id="expJson">Exportar JSON</button>
+        <button class="secundario" id="expCsv">Exportar CSV</button>
+        <button class="secundario" id="conf">Conferir cálculo</button>
+      </div>
+      <div id="saidaConf" class="oculto"></div>
     </div>
   </section>
 
@@ -243,7 +249,42 @@ function salvar(reg){
   return gravarRegistros(l);
 }
 
+function montarCsv(lista){
+  var cab = ['instrumento','momento','participanteId','grupo','inicioEm','fimEm','duracaoSegundos','resultado'];
+  var i;
+  for (i = 1; i <= 10; i++) cab.push('v' + i);   // valores informados ou respostas
+  for (i = 1; i <= 4; i++) cab.push('e' + i);    // erros percentuais, só da estimativa
+  var linhas = [cab.join(',')];
 
+  for (var j = 0; j < lista.length; j++){
+    var r = lista[j];
+    var resultado = r.erroMedioPercentual !== undefined ? r.erroMedioPercentual
+                  : r.nota !== undefined ? r.nota
+                  : r.pontuacao !== undefined ? r.pontuacao : '';
+    var col = [r.instrumento, r.momento, r.participanteId, r.grupo, r.inicioEm, r.fimEm, r.duracaoSegundos, resultado];
+    var chaves = r.respostas ? Object.keys(r.respostas) : [];
+    for (i = 0; i < 10; i++) col.push(chaves[i] ? r.respostas[chaves[i]] : '');
+    for (i = 1; i <= 4; i++) col.push(r.erros ? (r.erros['m' + i] !== undefined ? r.erros['m' + i] : '') : '');
+    linhas.push(col.map(function(c){
+      var s = String(c === undefined || c === null ? '' : c);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(','));
+  }
+  return linhas.join('\n');
+}
+
+function baixar(nome, conteudo, tipo){
+  try {
+    var blob = new Blob([conteudo], { type: tipo });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = nome;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  } catch (e) {
+    alert('Não foi possível baixar neste aparelho. Conteúdo:\n\n' + conteudo.slice(0, 3000));
+  }
+}
 
 /* ---------- tela ---------- */
 
@@ -390,6 +431,57 @@ el('voltarInicio').addEventListener('click', function(){
   sessao = null; el('pid').value = '';
   el('sub').textContent = 'Conectway · UPx08';
   atualizarResumo(); mostrar('inicio');
+});
+
+el('expJson').addEventListener('click', function(){
+  var l = listarRegistros();
+  if (!l.length){ alert('Nenhum registro para exportar.'); return; }
+  baixar('upx08-coleta-' + new Date().toISOString().slice(0,10) + '.json', JSON.stringify(l, null, 2), 'application/json');
+});
+
+el('expCsv').addEventListener('click', function(){
+  var l = listarRegistros();
+  if (!l.length){ alert('Nenhum registro para exportar.'); return; }
+  baixar('upx08-coleta-' + new Date().toISOString().slice(0,10) + '.csv', montarCsv(l), 'text/csv');
+});
+
+el('conf').addEventListener('click', function(){
+  var casos = [
+    { nome:'Acerto exato nas quatro', v:{ m1:45, m2:187, m3:46, m4:38 }, esperado:0 },
+    { nome:'Metade do valor em todas', v:{ m1:22.5, m2:93.5, m3:23, m4:19 }, esperado:50 },
+    { nome:'Dobro do valor em todas', v:{ m1:90, m2:374, m3:92, m4:76 }, esperado:100 },
+    { nome:'Erro só na altura do Coliseu', v:{ m1:90, m2:187, m3:46, m4:38 }, esperado:25 }
+  ];
+  var html = '<table><tr><th>Caso</th><th>Erro médio esperado</th><th>Obtido</th></tr>';
+  var tudoOk = true;
+  for (var c = 0; c < casos.length; c++){
+    var obtido;
+    try { obtido = calcular(casos[c].v).erroMedio; } catch (e) { obtido = 'erro'; }
+    var passou = obtido === casos[c].esperado;
+    if (!passou) tudoOk = false;
+    html += '<tr><td>' + casos[c].nome + '</td><td>' + casos[c].esperado + '%</td><td class="' +
+            (passou ? 'ok' : 'ruim') + '">' + obtido + '%</td></tr>';
+  }
+  var entradas = [
+    { nome:'Recusa campo vazio', t:'' },
+    { nome:'Recusa zero', t:'0' },
+    { nome:'Recusa negativo', t:'-10' },
+    { nome:'Recusa texto', t:'uns 40' }
+  ];
+  for (var d = 0; d < entradas.length; d++){
+    var rec = lerNumero(entradas[d].t) === null;
+    if (!rec) tudoOk = false;
+    html += '<tr><td>' + entradas[d].nome + '</td><td>recusa</td><td class="' +
+            (rec ? 'ok' : 'ruim') + '">' + (rec ? 'recusou' : 'aceitou') + '</td></tr>';
+  }
+  var virgula = lerNumero('12,5') === 12.5 && lerNumero('12.5') === 12.5;
+  if (!virgula) tudoOk = false;
+  html += '<tr><td>Aceita vírgula e ponto</td><td>12,5 = 12.5</td><td class="' +
+          (virgula ? 'ok' : 'ruim') + '">' + (virgula ? 'ok' : 'falhou') + '</td></tr>';
+  html += '</table><p class="peq">' + (tudoOk ? 'Cálculo conferido: todos os casos passaram.' : 'Atenção: há caso divergente acima.') + '</p>';
+
+  el('saidaConf').innerHTML = html;
+  el('saidaConf').classList.remove('oculto');
 });
 
 atualizarResumo();
