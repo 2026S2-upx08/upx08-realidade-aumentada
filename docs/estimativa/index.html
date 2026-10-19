@@ -185,7 +185,65 @@ function lerNumero(texto){
   return n;
 }
 
+/** Erro percentual absoluto: |estimativa - referência| / referência x 100 */
+function erroPercentual(estimativa, referencia){
+  return Math.abs(estimativa - referencia) / referencia * 100;
+}
+
+function calcular(valores){
+  var erros = {}, soma = 0;
+  for (var i = 0; i < MEDIDAS.length; i++){
+    var m = MEDIDAS[i];
+    var v = valores[m.id];
+    if (typeof v !== 'number' || !isFinite(v) || v <= 0)
+      throw new Error('Valor inválido ou ausente na medida ' + m.id + ': ' + JSON.stringify(v));
+    var e = erroPercentual(v, m.referencia);
+    erros[m.id] = Math.round(e * 100) / 100;
+    soma += e;
+  }
+  return { erros: erros, erroMedio: Math.round(soma / MEDIDAS.length * 100) / 100 };
+}
+
+function montarRegistro(p){
+  var r = calcular(p.valores);
+  return {
+    instrumento: 'ESTIMATIVA',
+    momento: p.momento,
+    participanteId: p.participanteId,
+    grupo: p.grupo,
+    inicioEm: p.inicioEm.toISOString(),
+    fimEm: p.fimEm.toISOString(),
+    duracaoSegundos: Math.round((p.fimEm - p.inicioEm) / 1000),
+    // guarda o valor bruto informado, e não só o erro, para permitir reanálise
+    respostas: JSON.parse(JSON.stringify(p.valores)),
+    erros: r.erros,
+    erroMedioPercentual: r.erroMedio
+  };
+}
+
 /* ---------- armazenamento ---------- */
+
+function listarRegistros(){
+  try { return JSON.parse(localStorage.getItem(CHAVE) || '[]'); } catch (e) { return []; }
+}
+function gravarRegistros(l){
+  try { localStorage.setItem(CHAVE, JSON.stringify(l)); return true; } catch (e) { return false; }
+}
+function acharRegistro(pid, momento){
+  var l = listarRegistros();
+  for (var i = 0; i < l.length; i++){
+    if (l[i].instrumento === 'ESTIMATIVA' && l[i].participanteId === pid && l[i].momento === momento) return i;
+  }
+  return -1;
+}
+function salvar(reg){
+  var l = listarRegistros();
+  var i = acharRegistro(reg.participanteId, reg.momento);
+  if (i >= 0) l[i] = reg; else l.push(reg);
+  return gravarRegistros(l);
+}
+
+
 
 /* ---------- tela ---------- */
 
@@ -241,7 +299,16 @@ function mostrar(tela){
 }
 
 function atualizarResumo(){
-  el('resumo').textContent = 'Gravação de registros entra no próximo commit.';
+  var l = listarRegistros();
+  if (!l.length){ el('resumo').textContent = 'Nenhum registro gravado ainda.'; return; }
+  var por = {};
+  for (var i = 0; i < l.length; i++){
+    var k = l[i].instrumento + ' / ' + (l[i].momento || '-');
+    por[k] = (por[k] || 0) + 1;
+  }
+  var t = [];
+  for (var k2 in por) t.push(k2 + ': ' + por[k2]);
+  el('resumo').textContent = t.join(' · ');
 }
 
 /* ---------- eventos ---------- */
@@ -254,6 +321,11 @@ el('abrir').addEventListener('click', function(){
     aviso.classList.remove('oculto'); el('pid').focus(); return;
   }
   var momento = el('mom').value;
+  if (acharRegistro(pid, momento) >= 0){
+    if (!confirm('Já existe registro de ' + pid + ' neste momento (' +
+        (momento === 'pre' ? 'pré-teste' : 'pós-teste') +
+        ').\n\nRefazer apaga o registro anterior. Continuar?')) return;
+  }
   aviso.classList.add('oculto');
   sessao = {
     participanteId: pid, grupo: el('grp').value, momento: momento,
@@ -266,7 +338,51 @@ el('abrir').addEventListener('click', function(){
 });
 
 el('concluir').addEventListener('click', function(){
-  // nesta etapa a tela apenas avanca: validacao, calculo e gravacao vem no proximo commit
+  var problemas = [];
+  for (var i = 0; i < MEDIDAS.length; i++){
+    var m = MEDIDAS[i];
+    var bruto = el('in-' + m.id).value;
+    var n = lerNumero(bruto);
+    if (n === null){
+      problemas.push(m.id);
+      el('bloco-' + m.id).classList.add('pendente');
+      var msg = bruto.trim() === '' ? 'Informe um valor em metros.'
+              : 'Valor inválido. Use apenas números maiores que zero, por exemplo 12 ou 12,5.';
+      var e = el('err-' + m.id);
+      e.textContent = msg; e.classList.remove('oculto');
+    }
+  }
+  if (problemas.length){
+    el('bloco-' + problemas[0]).scrollIntoView({ behavior:'smooth', block:'center' });
+    var av = el('medidas').querySelector('.aviso');
+    if (!av){ av = document.createElement('p'); av.className = 'aviso'; el('medidas').appendChild(av); }
+    av.textContent = problemas.length === 1
+      ? 'Falta 1 medida para concluir.'
+      : 'Faltam ' + problemas.length + ' medidas para concluir.';
+    return;
+  }
+
+  var reg = montarRegistro({
+    participanteId: sessao.participanteId, grupo: sessao.grupo, momento: sessao.momento,
+    valores: valoresAtuais(), inicioEm: sessao.inicioEm, fimEm: new Date()
+  });
+  var gravou = salvar(reg);
+
+  if (sessao.verErro){
+    el('blocoErro').classList.remove('oculto');
+    el('erroTxt').textContent = 'Erro médio: ' + reg.erroMedioPercentual + '%';
+    var linhas = '<table><tr><th>Medida</th><th>Informado</th><th>Referência</th><th>Erro</th></tr>';
+    for (var j = 0; j < MEDIDAS.length; j++){
+      var mm = MEDIDAS[j];
+      linhas += '<tr><td>' + mm.estrutura + '</td><td>' + reg.respostas[mm.id] + ' m</td><td>' +
+                mm.referencia + ' m</td><td>' + reg.erros[mm.id] + '%</td></tr>';
+    }
+    el('detalheErro').innerHTML = linhas + '</table>';
+  } else {
+    el('blocoErro').classList.add('oculto');
+  }
+  if (!gravou) alert('Atenção: não foi possível gravar neste navegador. Anote os valores antes de sair.');
+  atualizarResumo();
   mostrar('fim');
 });
 
