@@ -10,13 +10,13 @@ import {
 } from '@react-three/xr'
 import { Matrix4, Vector3, type Group } from 'three'
 import { HumanFigure, STRUCTURES, Structure, type StructureId } from './structures'
+import { assignSessionOrder } from './counterbalance'
 
 const store = createXRStore({ hitTest: true, domOverlay: true })
 
 const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
-const DEFAULT_STRUCTURE: StructureId = 'coliseu'
 
 // Figura humana fica em 1,70 m reais, fora da escala da maquete (decisão da #40)
 const HUMAN_HALF_WIDTH_M = 0.3
@@ -115,11 +115,13 @@ function SizeControl({
   scale,
   fps,
   onChange,
+  onFinish,
 }: {
   sizeM: number
   scale: number
   fps: number | null
   onChange: (value: number) => void
+  onFinish: () => void
 }) {
   return (
     <IfInSessionMode allow="immersive-ar">
@@ -142,17 +144,97 @@ function SizeControl({
             onChange={(event) => onChange(Number(event.target.value))}
             className="w-full"
           />
+          <button
+            type="button"
+            onClick={onFinish}
+            className="mt-2 w-full rounded-md bg-black px-3 py-2 text-xs font-medium text-white"
+          >
+            Concluir estrutura
+          </button>
         </div>
       </XRDomOverlay>
     </IfInSessionMode>
   )
 }
 
+function StructureList({
+  order,
+  currentIndex,
+  onVisualize,
+}: {
+  order: StructureId[]
+  currentIndex: number
+  onVisualize: () => void
+}) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
+      <h1 className="text-lg font-medium">Estruturas</h1>
+      <ul className="w-full max-w-xs space-y-2">
+        {order.map((id, index) => (
+          <li
+            key={id}
+            className={`flex items-center justify-between rounded-md border p-3 ${
+              index === currentIndex ? 'border-black' : 'border-gray-200 text-gray-400'
+            }`}
+          >
+            <span>{STRUCTURES[id].label}</span>
+            {index < currentIndex && <span>✓ concluída</span>}
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        onClick={onVisualize}
+        className="rounded-md bg-white px-6 py-3 text-base font-medium shadow-md"
+      >
+        Visualizar
+      </button>
+    </div>
+  )
+}
+
 export default function App() {
+  const [order] = useState<StructureId[]>(() => assignSessionOrder())
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [phase, setPhase] = useState<'list' | 'ar' | 'done'>('list')
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
-  const structure = DEFAULT_STRUCTURE
   const [fps, setFps] = useState<number | null>(null)
+
+  const structure = order[currentIndex]
+
+  function handleFinishStructure() {
+    setAnchoredAt(null)
+    setSizeM(DEFAULT_SIZE_M)
+    if (currentIndex + 1 < order.length) {
+      setCurrentIndex((index) => index + 1)
+      setPhase('list')
+    } else {
+      console.info('Ordem efetivamente apresentada:', order)
+      setPhase('done')
+    }
+  }
+
+  if (phase === 'list') {
+    return (
+      <StructureList
+        order={order}
+        currentIndex={currentIndex}
+        onVisualize={() => setPhase('ar')}
+      />
+    )
+  }
+
+  if (phase === 'done') {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-6 text-center">
+        <p>
+          Sessão concluída. Ordem apresentada:{' '}
+          {order.map((id) => STRUCTURES[id].label).join(' → ')}
+        </p>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -179,6 +261,7 @@ export default function App() {
             scale={getScale(structure, sizeM)}
             fps={fps}
             onChange={setSizeM}
+            onFinish={handleFinishStructure}
           />
         </XR>
       </Canvas>
