@@ -76,7 +76,7 @@
 
 <header><div class="caixa">
   <h1>Questionário de compreensão</h1>
-  <p id="sub">Técnicas e materiais construtivos · Conectway · UPx08</p>
+  <p id="sub">Escala e proporção · Conectway · UPx08</p>
 </div></header>
 
 <main class="caixa">
@@ -160,7 +160,7 @@
 
 <script>
 /* ============================================================
-   Questionário de compreensão - técnicas e materiais
+   Questionário de compreensão - escala e proporção
    Base: seção 3.4 do artigo. Nota de 0 a 10, um ponto por acerto.
    Arquivo único, sem dependências, funciona abrindo direto (file://).
    ============================================================ */
@@ -517,7 +517,7 @@ el('concluir').addEventListener('click', function(){
 el('voltarInicio').addEventListener('click', function(){
   sessao = null;
   el('pid').value = '';
-  el('sub').textContent = 'Técnicas e materiais construtivos · Conectway · UPx08';
+  el('sub').textContent = 'Escala e proporção · Conectway · UPx08';
   atualizarResumo();
   mostrar('inicio');
 });
@@ -544,7 +544,7 @@ el('conf').addEventListener('click', function(){
   casos.push({ nome:'Todas corretas', r:resp(function(i){ return ITENS[i].correta; }), esperado:10 });
   casos.push({ nome:'Todas erradas', r:resp(function(i){ return (ITENS[i].correta + 1) % 4; }), esperado:0 });
   casos.push({ nome:'Cinco primeiras corretas', r:resp(function(i){ return i < 5 ? ITENS[i].correta : (ITENS[i].correta + 2) % 4; }), esperado:5 });
-  casos.push({ nome:'Só o item transversal correto', r:resp(function(i){ return i === 9 ? ITENS[i].correta : (ITENS[i].correta + 1) % 4; }), esperado:1 });
+  casos.push({ nome:'Só o último item correto', r:resp(function(i){ return i === 9 ? ITENS[i].correta : (ITENS[i].correta + 1) % 4; }), esperado:1 });
 
   var html = '<table><tr><th>Caso</th><th>Esperado</th><th>Obtido</th></tr>';
   var tudoOk = true;
