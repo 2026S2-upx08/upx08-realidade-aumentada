@@ -165,96 +165,101 @@
    Arquivo único, sem dependências, funciona abrindo direto (file://).
    ============================================================ */
 
+/* Nenhum item cita medida dos monumentos: este questionário roda na mesma
+   sessão da tarefa de estimativa, e qualquer valor exibido aqui contaminaria
+   o erro medido lá. Os itens sobre as estruturas são só comparativos; os de
+   raciocínio de escala usam números genéricos, longe dos valores de referência.
+   A posição da alternativa correta varia porque a tela não embaralha. */
 var ITENS = [
-  { id:'q1', monumento:'Coliseu',
-    enunciado:'Qual é o material da estrutura do Coliseu?',
+  { id:'q1', bloco:'Comparação entre as estruturas',
+    enunciado:'Qual das três estruturas ocupa a maior área no chão?',
     alternativas:[
-      'Concreto romano revestido de alvenaria',
-      'Blocos de granito encaixados sem argamassa',
-      'Concreto armado com estrutura de aço',
-      'Tijolos de barro secos ao sol'
-    ], correta:0, fonte:'LANCASTER, 2005' },
+      'Estátua da Liberdade',
+      'Cristo Redentor',
+      'Coliseu',
+      'As três ocupam praticamente a mesma área'
+    ], correta:2, fonte:'LANCASTER, 2005; NIST, 2017; IPHAN, [s.d.]' },
 
-  { id:'q2', monumento:'Coliseu',
-    enunciado:'Que elemento construtivo distribui o peso do Coliseu até o solo?',
+  { id:'q2', bloco:'Comparação entre as estruturas',
+    enunciado:'Qual das três estruturas é mais larga do que alta?',
     alternativas:[
-      'Arcos e abóbadas',
-      'Colunas de ferro fundido',
-      'Paredes maciças sem aberturas',
-      'Tirantes de aço sob tração'
-    ], correta:0, fonte:'LANCASTER, 2005' },
+      'Coliseu',
+      'Estátua da Liberdade',
+      'Cristo Redentor, por causa dos braços abertos',
+      'Nenhuma das três'
+    ], correta:0, fonte:'LANCASTER, 2005; NIST, 2017; IPHAN, [s.d.]' },
 
-  { id:'q3', monumento:'Coliseu',
-    enunciado:'Como a estrutura do Coliseu está organizada?',
+  { id:'q3', bloco:'Comparação entre as estruturas',
+    enunciado:'Comparando a altura do Coliseu com a altura total do Cristo Redentor, incluindo o pedestal, qual afirmação está correta?',
     alternativas:[
-      'Em cinco anéis concêntricos',
-      'Em um único bloco retangular',
-      'Em quatro torres ligadas por passarelas',
-      'Em duas alas simétricas separadas por um pátio'
-    ], correta:0, fonte:'LANCASTER, 2005' },
+      'O Cristo Redentor é mais alto que o Coliseu',
+      'Os dois têm exatamente a mesma altura',
+      'O Cristo Redentor tem o dobro da altura do Coliseu',
+      'O Coliseu é mais alto que o Cristo Redentor'
+    ], correta:3, fonte:'LANCASTER, 2005; IPHAN, [s.d.]' },
 
-  { id:'q4', monumento:'Estátua da Liberdade',
-    enunciado:'Como é a estrutura interna da Estátua da Liberdade?',
+  { id:'q4', bloco:'Noção de escala',
+    enunciado:'Um prédio de 24 m de altura é representado por uma maquete na escala 1:100. Qual é a altura da maquete?',
     alternativas:[
-      'Um pilar central de ferro com armação secundária em treliça',
-      'Um núcleo maciço de concreto',
-      'Uma casca de cobre autoportante, sem estrutura interna',
-      'Uma armação de madeira revestida por chapas'
-    ], correta:0, fonte:'NIST, 2017; ASCE METROPOLITAN SECTION, [s.d.]' },
+      '2,4 cm',
+      '24 cm',
+      '2,4 m',
+      '1 m'
+    ], correta:1, fonte:'elaboração própria' },
 
-  { id:'q5', monumento:'Estátua da Liberdade',
-    enunciado:'De que material é a pele externa da Estátua da Liberdade?',
+  { id:'q5', bloco:'Noção de escala',
+    enunciado:'Uma maquete de 80 cm representa uma torre de 80 m. Em que escala está a maquete?',
     alternativas:[
-      'Cobre',
-      'Bronze fundido',
-      'Mármore branco',
-      'Aço inoxidável'
-    ], correta:0, fonte:'NIST, 2017; ASCE METROPOLITAN SECTION, [s.d.]' },
+      '1:10',
+      '1:1000',
+      '1:100',
+      '1:80'
+    ], correta:2, fonte:'elaboração própria' },
 
-  { id:'q6', monumento:'Estátua da Liberdade',
-    enunciado:'Como as chapas da pele externa foram moldadas?',
+  { id:'q6', bloco:'Noção de escala',
+    enunciado:'Duas torres estão representadas na mesma escala. Na realidade, a torre A tem o dobro da altura da torre B. Na maquete, a torre A tem:',
     alternativas:[
-      'Marteladas contra moldes, pela técnica de repuxo',
-      'Fundidas em moldes de areia',
-      'Cortadas e dobradas a frio em prensa',
-      'Esculpidas a partir de blocos maciços'
-    ], correta:0, fonte:'NIST, 2017; ASCE METROPOLITAN SECTION, [s.d.]' },
+      'A mesma altura da torre B',
+      'O dobro da altura da torre B',
+      'Metade da altura da torre B',
+      'Quatro vezes a altura da torre B'
+    ], correta:1, fonte:'elaboração própria' },
 
-  { id:'q7', monumento:'Cristo Redentor',
-    enunciado:'Qual é o material da estrutura do Cristo Redentor?',
+  { id:'q7', bloco:'Noção de escala',
+    enunciado:'Uma maquete na escala 1:50 é refeita para ficar duas vezes maior. Qual passa a ser a escala?',
     alternativas:[
-      'Concreto armado',
-      'Aço estrutural rebitado',
-      'Pedra-sabão maciça',
-      'Alvenaria de tijolos'
-    ], correta:0, fonte:'IPHAN, [s.d.]' },
+      '1:100',
+      '1:52',
+      '1:50, porque a escala não muda',
+      '1:25'
+    ], correta:3, fonte:'elaboração própria' },
 
-  { id:'q8', monumento:'Cristo Redentor',
-    enunciado:'Qual material reveste a superfície do Cristo Redentor?',
+  { id:'q8', bloco:'Referências de tamanho',
+    enunciado:'Por que colocar uma figura humana ao lado de uma maquete ajuda a perceber o tamanho real do que ela representa?',
     alternativas:[
-      'Mosaico de pedra-sabão',
-      'Chapas de cobre',
-      'Azulejos de cerâmica esmaltada',
-      'Argamassa pintada de branco'
-    ], correta:0, fonte:'IPHAN, [s.d.]' },
+      'Porque o tamanho de uma pessoa é conhecido e, na mesma escala, serve de comparação',
+      'Porque a figura deixa a maquete mais bonita e chama a atenção',
+      'Porque a figura indica em que lugar do mundo fica a construção',
+      'Porque a figura mostra quantas pessoas cabem dentro da construção'
+    ], correta:0, fonte:'elaboração própria' },
 
-  { id:'q9', monumento:'Cristo Redentor',
-    enunciado:'Que solução construtiva foi adotada para a estrutura resistir aos ventos do alto do morro?',
+  { id:'q9', bloco:'Referências de tamanho',
+    enunciado:'Ao lado de uma maquete há uma figura humana na mesma escala. Se a maquete for ampliada para o dobro do tamanho, o que deve acontecer com a figura?',
     alternativas:[
-      'Uma leve inclinação de cerca de 5 graus próxima à cabeça',
-      'Cabos de aço ancorados na rocha',
-      'Uma base giratória que acompanha a direção do vento',
-      'Aberturas nos braços para deixar o vento passar'
-    ], correta:0, fonte:'IPHAN, [s.d.]' },
+      'Continuar do mesmo tamanho',
+      'Ficar com a metade do tamanho',
+      'Ficar com o dobro do tamanho também',
+      'Ficar com quatro vezes o tamanho'
+    ], correta:2, fonte:'elaboração própria' },
 
-  { id:'q10', monumento:'As três estruturas',
-    enunciado:'Qual associação entre monumento e material estrutural principal está correta?',
+  { id:'q10', bloco:'Referências de tamanho',
+    enunciado:'Numa maquete, uma figura humana que representa uma pessoa de 1,70 m mede 2 cm. Um edifício ao lado, na mesma escala, mede 20 cm. Qual é a altura real aproximada do edifício?',
     alternativas:[
-      'Coliseu, concreto romano; Estátua da Liberdade, ferro; Cristo Redentor, concreto armado',
-      'Coliseu, mármore; Estátua da Liberdade, bronze; Cristo Redentor, granito',
-      'Coliseu, concreto armado; Estátua da Liberdade, aço; Cristo Redentor, pedra-sabão',
-      'Coliseu, tijolo; Estátua da Liberdade, madeira; Cristo Redentor, concreto romano'
-    ], correta:0, fonte:'LANCASTER, 2005; NIST, 2017; IPHAN, [s.d.]' }
+      '1,7 m',
+      '20 m',
+      '170 m',
+      '17 m'
+    ], correta:3, fonte:'elaboração própria' }
 ];
 
 var NOTA_MAXIMA = ITENS.length; // dez itens, um ponto por acerto, nota de 0 a 10
@@ -361,12 +366,12 @@ var sessao = null;
 
 function desenharItens(){
   var html = '';
-  var monAnterior = null;
+  var blocoAnterior = null;
   for (var i = 0; i < ITENS.length; i++){
     var it = ITENS[i];
-    if (it.monumento !== monAnterior){
-      html += '<p class="grupo-mon">' + it.monumento + '</p>';
-      monAnterior = it.monumento;
+    if (it.bloco !== blocoAnterior){
+      html += '<p class="grupo-mon">' + it.bloco + '</p>';
+      blocoAnterior = it.bloco;
     }
     html += '<div class="item" id="bloco-' + it.id + '">';
     html += '<p class="enun"><span class="num">' + (i + 1) + '</span><span>' + it.enunciado + '</span></p>';
