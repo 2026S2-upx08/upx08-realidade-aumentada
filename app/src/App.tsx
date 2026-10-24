@@ -18,6 +18,8 @@ const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
 
+type Condition = 'ra' | '2d'
+
 // Figura humana fica em 1,70 m reais, fora da escala da maquete (decisão da #40)
 const HUMAN_HALF_WIDTH_M = 0.3
 const HUMAN_GAP_M = 0.3
@@ -157,6 +159,64 @@ function SizeControl({
   )
 }
 
+// Tela inicial (4.9/Figura 2a do artigo): o pesquisador informa o código do
+// participante e a condição experimental antes de a sessão começar.
+function StartScreen({
+  onStart,
+}: {
+  onStart: (participantCode: string, condition: Condition) => void
+}) {
+  const [participantCode, setParticipantCode] = useState('')
+  const [condition, setCondition] = useState<Condition>('ra')
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
+      <h1 className="text-lg font-medium">Início da sessão</h1>
+      <div className="w-full max-w-xs space-y-3">
+        <label className="block text-sm">
+          Código do participante
+          <input
+            type="text"
+            value={participantCode}
+            onChange={(event) => setParticipantCode(event.target.value)}
+            placeholder="P_"
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </label>
+        <fieldset className="text-sm">
+          <legend className="mb-1">Condição experimental</legend>
+          <label className="mr-4">
+            <input
+              type="radio"
+              name="condition"
+              checked={condition === 'ra'}
+              onChange={() => setCondition('ra')}
+            />{' '}
+            RA
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="condition"
+              checked={condition === '2d'}
+              onChange={() => setCondition('2d')}
+            />{' '}
+            Bidimensional
+          </label>
+        </fieldset>
+      </div>
+      <button
+        type="button"
+        disabled={participantCode.trim() === ''}
+        onClick={() => onStart(participantCode, condition)}
+        className="rounded-md bg-white px-6 py-3 text-base font-medium shadow-md disabled:opacity-50"
+      >
+        Iniciar sessão
+      </button>
+    </div>
+  )
+}
+
 function StructureList({
   order,
   currentIndex,
@@ -193,15 +253,49 @@ function StructureList({
   )
 }
 
+// RF06: modo bidimensional do grupo de controle. Mesmo fluxo de avanço do
+// modo RA, mas sem renderizar o modelo tridimensional ancorado (RNF07,
+// equivalência entre as condições).
+//
+// PENDENTE: a imagem estática exibida aqui ainda é um placeholder, a ser
+// substituída pela renderização real de cada estrutura.
+function FlatView({ structure, onFinish }: { structure: StructureId; onFinish: () => void }) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
+      <div className="flex h-64 w-full max-w-xs items-center justify-center rounded-md bg-gray-200 text-center text-sm text-gray-500">
+        Imagem estática do {STRUCTURES[structure].label}
+        <br />
+        (placeholder, pendente renderização real)
+      </div>
+      <h1 className="text-lg font-medium">{STRUCTURES[structure].label}</h1>
+      <button
+        type="button"
+        onClick={onFinish}
+        className="rounded-md bg-black px-6 py-3 text-base font-medium text-white shadow-md"
+      >
+        Concluir estrutura
+      </button>
+    </div>
+  )
+}
+
 export default function App() {
   const [order] = useState<StructureId[]>(() => assignSessionOrder())
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [phase, setPhase] = useState<'list' | 'ar' | 'done'>('list')
+  const [phase, setPhase] = useState<'start' | 'list' | 'ar' | 'flat' | 'done'>('start')
+  const [condition, setCondition] = useState<Condition>('ra')
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
   const [fps, setFps] = useState<number | null>(null)
 
   const structure = order[currentIndex]
+
+  function handleStart(_participantCode: string, selectedCondition: Condition) {
+    // O código do participante será persistido junto aos dados coletados
+    // quando o RF11 (registro e exportação) for implementado.
+    setCondition(selectedCondition)
+    setPhase('list')
+  }
 
   function handleFinishStructure() {
     setAnchoredAt(null)
@@ -215,14 +309,22 @@ export default function App() {
     }
   }
 
+  if (phase === 'start') {
+    return <StartScreen onStart={handleStart} />
+  }
+
   if (phase === 'list') {
     return (
       <StructureList
         order={order}
         currentIndex={currentIndex}
-        onVisualize={() => setPhase('ar')}
+        onVisualize={() => setPhase(condition === 'ra' ? 'ar' : 'flat')}
       />
     )
+  }
+
+  if (phase === 'flat') {
+    return <FlatView structure={structure} onFinish={handleFinishStructure} />
   }
 
   if (phase === 'done') {
