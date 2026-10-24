@@ -20,6 +20,10 @@ const DEFAULT_SIZE_M = 2.25
 
 type Condition = 'ra' | '2d'
 
+// RNF07: cada visita a uma estrutura fica registrada aqui para comparar o
+// tempo de exposição entre as duas condições (ainda sem export, RF11).
+type ExposureRecord = { structure: StructureId; condition: Condition; exposureMs: number }
+
 // Figura humana fica em 1,70 m reais, fora da escala da maquete (decisão da #40)
 const HUMAN_HALF_WIDTH_M = 0.3
 const HUMAN_GAP_M = 0.3
@@ -287,6 +291,8 @@ export default function App() {
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
   const [fps, setFps] = useState<number | null>(null)
+  const [exposureLog, setExposureLog] = useState<ExposureRecord[]>([])
+  const visitStartedAt = useRef<number | null>(null)
 
   const structure = order[currentIndex]
 
@@ -297,14 +303,23 @@ export default function App() {
     setPhase('list')
   }
 
+  function handleVisualize() {
+    visitStartedAt.current = performance.now()
+    setPhase(condition === 'ra' ? 'ar' : 'flat')
+  }
+
   function handleFinishStructure() {
+    if (visitStartedAt.current !== null) {
+      const exposureMs = performance.now() - visitStartedAt.current
+      setExposureLog((log) => [...log, { structure, condition, exposureMs }])
+      visitStartedAt.current = null
+    }
     setAnchoredAt(null)
     setSizeM(DEFAULT_SIZE_M)
     if (currentIndex + 1 < order.length) {
       setCurrentIndex((index) => index + 1)
       setPhase('list')
     } else {
-      console.info('Ordem efetivamente apresentada:', order)
       setPhase('done')
     }
   }
@@ -314,13 +329,7 @@ export default function App() {
   }
 
   if (phase === 'list') {
-    return (
-      <StructureList
-        order={order}
-        currentIndex={currentIndex}
-        onVisualize={() => setPhase(condition === 'ra' ? 'ar' : 'flat')}
-      />
-    )
+    return <StructureList order={order} currentIndex={currentIndex} onVisualize={handleVisualize} />
   }
 
   if (phase === 'flat') {
@@ -328,6 +337,8 @@ export default function App() {
   }
 
   if (phase === 'done') {
+    console.info('Ordem efetivamente apresentada:', order)
+    console.info('Tempo de exposição por estrutura:', exposureLog)
     return (
       <div className="flex min-h-screen items-center justify-center p-6 text-center">
         <p>
