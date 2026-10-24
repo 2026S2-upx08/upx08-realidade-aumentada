@@ -115,3 +115,33 @@ Nesta etapa do projeto, por restrição de escopo (ausência de aprovação éti
 | RNF07 | Equivalência           | Os modos de RA e bidimensional devem rodar na mesma aplicação e dispositivo, com o mesmo conteúdo e tempo de exposição        |
 | RNF08 | Disponibilidade        | Aplicação acessível via URL com HTTPS; dados armazenados localmente até a exportação                                          |
 | RNF09 | Privacidade            | Participantes identificados apenas por código, sem dado pessoal identificável registrado                                      |
+
+---
+
+## 8. Tecnologias Utilizadas
+
+| Tecnologia                                      | Versão  | Utilização                                                        |
+| ----------------------------------------------- | ------- | ----------------------------------------------------------------- |
+| React                                           | 19.2.8  | Biblioteca de interface                                           |
+| react-three-fiber                               | 9.8.1   | Renderização 3D declarativa sobre Three.js                        |
+| Three.js                                        | 0.186.1 | Motor de renderização 3D/WebGL                                    |
+| @react-three/xr                                 | 6.6.31  | Integração com a WebXR Device API (hit-test, sessão immersive-ar) |
+| @react-three/drei                               | 10.7.9  | Utilitários para react-three-fiber (carregamento de modelos glTF) |
+| Tailwind CSS                                    | 4.3.3   | Estilização da interface                                          |
+| Vite                                            | 6.4.3   | Build tool e servidor de desenvolvimento                          |
+| TypeScript                                      | 6.0.2   | Tipagem estática                                                  |
+| oxlint                                          | 1.81.0  | Linter                                                            |
+| @gltf-transform (cli/core/extensions/functions) | 4.5.1   | Otimização dos modelos glTF (redução de polígonos)                |
+| meshoptimizer                                   | 1.1.1   | Compressão de geometria dos modelos                               |
+| sharp                                           | 0.35.5  | Compressão das texturas dos modelos                               |
+| Vercel                                          | -       | Hospedagem e deploy contínuo, com HTTPS                           |
+| GitHub                                          | -       | Controle de versão e hospedagem do repositório                    |
+
+---
+
+## 9. Hardware Utilizado
+
+| Equipamento | Modelo             | Característica relevante                             | Utilização                                                |
+| ----------- | ------------------ | ---------------------------------------------------- | --------------------------------------------------------- |
+| Smartphone  | Samsung Galaxy S25 | Android, suporte à WebXR Device API e ao ARCore      | Validação completa em RA real                             |
+| Computador  | Windows e Linux    | Google Chrome, com a extensão Immersive Web Emulator | Desenvolvimento e testes de interface, sem sessão RA real |
