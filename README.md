@@ -302,15 +302,15 @@ Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a 
 
 ## 20. Testes Técnicos
 
-| Teste                                            | Procedimento                                                               | Resultado esperado                                                                   | Resultado obtido                                                                                        | Status |
-| ------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------ |
-| Ancoragem via hit-test                            | Apontar a câmera para uma superfície horizontal e tocar no retículo detectado | Modelo ancorado na posição tocada, sem deslocamento                                     | Ancoragem funcionou conforme esperado, sem deslocamento perceptível                                           | ✅     |
-| Ajuste de escala do modelo                        | Mover o controle deslizante de 1 a 4 metros                                   | Modelo da estrutura escala proporcionalmente; figura humana mantém altura real          | Estrutura escalou corretamente; a primeira versão com a figura humana proporcional ficou quase invisível, corrigida para altura fixa (ver seção 27) | ✅     |
-| Estabilidade do rastreamento                      | Observar o modelo ancorado por alguns minutos, movendo o dispositivo          | Modelo permanece fixo no plano detectado                                                | Sem deslocamento perceptível durante o teste de campo                                                         | ✅     |
-| Ordem contrabalanceada entre sessões               | Completar uma sessão e recarregar a aplicação                                 | A próxima sessão apresenta uma das 6 permutações, diferente da anterior                 | Ordem mudou corretamente entre as sessões testadas                                                            | ✅     |
-| Tela de início e modo bidimensional                | Escolher a condição Bidimensional e percorrer as 3 estruturas                 | Nenhuma permissão de câmera é solicitada; imagem estática exibida em cada estrutura      | Fluxo funcionou sem pedir câmera                                                                               | ✅     |
-| Registro do tempo de exposição                     | Concluir uma sessão completa e checar o console do navegador                  | Tempo de cada estrutura registrado, junto da condição (RA ou 2D)                        | Log exibido corretamente ao final da sessão                                                                   | ✅     |
-| Desempenho (RNF04, mínimo 30 fps)                  | Abrir a aplicação com `?fps` na URL e observar o contador durante uma sessão em RA | Taxa igual ou superior a 30 fps                                                    | Ainda não medido formalmente em dispositivo real                                                              | ⬜     |
+| Teste                                | Procedimento                                                                       | Resultado esperado                                                                  | Resultado obtido                                                                                                                                    | Status |
+| ------------------------------------ | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| Ancoragem via hit-test               | Apontar a câmera para uma superfície horizontal e tocar no retículo detectado      | Modelo ancorado na posição tocada, sem deslocamento                                 | Ancoragem funcionou conforme esperado, sem deslocamento perceptível                                                                                 | ✅     |
+| Ajuste de escala do modelo           | Mover o controle deslizante de 1 a 4 metros                                        | Modelo da estrutura escala proporcionalmente; figura humana mantém altura real      | Estrutura escalou corretamente; a primeira versão com a figura humana proporcional ficou quase invisível, corrigida para altura fixa (ver seção 27) | ✅     |
+| Estabilidade do rastreamento         | Observar o modelo ancorado por alguns minutos, movendo o dispositivo               | Modelo permanece fixo no plano detectado                                            | Sem deslocamento perceptível durante o teste de campo                                                                                               | ✅     |
+| Ordem contrabalanceada entre sessões | Completar uma sessão e recarregar a aplicação                                      | A próxima sessão apresenta uma das 6 permutações, diferente da anterior             | Ordem mudou corretamente entre as sessões testadas                                                                                                  | ✅     |
+| Tela de início e modo bidimensional  | Escolher a condição Bidimensional e percorrer as 3 estruturas                      | Nenhuma permissão de câmera é solicitada; imagem estática exibida em cada estrutura | Fluxo funcionou sem pedir câmera                                                                                                                    | ✅     |
+| Registro do tempo de exposição       | Concluir uma sessão completa e checar o console do navegador                       | Tempo de cada estrutura registrado, junto da condição (RA ou 2D)                    | Log exibido corretamente ao final da sessão                                                                                                         | ✅     |
+| Desempenho (RNF04, mínimo 30 fps)    | Abrir a aplicação com `?fps` na URL e observar o contador durante uma sessão em RA | Taxa igual ou superior a 30 fps                                                     | Ainda não medido formalmente em dispositivo real                                                                                                    | ⬜     |
 
 **Legenda:** ✅ Validado · 🚧 Em andamento · ⬜ Ainda não testado
 
@@ -318,10 +318,10 @@ Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a 
 
 ## 21. Dispositivos Testados
 
-| Dispositivo                                           | O que foi testado                                                                              | Resultado                                                                                           |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Samsung Galaxy S25 (Android, Chrome)                     | Sessão WebXR completa: ancoragem, ajuste de escala, figura humana, troca de estrutura, modo bidimensional | Funcionou conforme esperado nos testes de campo realizados                                              |
-| Windows e Linux (Chrome, extensão Immersive Web Emulator) | Interface, máquina de estados e fluxo de telas, sem sessão WebXR real                               | Suficiente para desenvolvimento e teste de interface; não substitui o teste em dispositivo real para ancoragem e rastreamento (ver seção 22) |
+| Dispositivo                                               | O que foi testado                                                                                         | Resultado                                                                                                                                    |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Samsung Galaxy S25 (Android, Chrome)                      | Sessão WebXR completa: ancoragem, ajuste de escala, figura humana, troca de estrutura, modo bidimensional | Funcionou conforme esperado nos testes de campo realizados                                                                                   |
+| Windows e Linux (Chrome, extensão Immersive Web Emulator) | Interface, máquina de estados e fluxo de telas, sem sessão WebXR real                                     | Suficiente para desenvolvimento e teste de interface; não substitui o teste em dispositivo real para ancoragem e rastreamento (ver seção 22) |
 
 ---
 
@@ -333,3 +333,39 @@ Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a 
 - O modo bidimensional (RF06) ainda não está conectado aos instrumentos de avaliação (SUS, questionário de compreensão), dependência da task de integração (ver seção 6, nota do RF09/RF10).
 - A taxa de quadros (RNF04) ainda não foi validada formalmente em dispositivo real, apesar do contador (`?fps`) já implementado.
 - A validação em dispositivo real foi feita em apenas um smartphone (Samsung Galaxy S25), sem cobertura de aparelhos de entrada ou mais antigos.
+
+---
+
+## 23. Evidências de Funcionamento
+
+> Seção pendente: depende de screenshot, gif ou vídeo real da aplicação em uso. Será preenchida junto às seções 17, 18 e 19.
+
+---
+
+## 24. Problemas Encontrados e Soluções
+
+| Problema                                                                     | Causa                                                                                                        | Solução                                                                                                                                            |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Figura humana de referência com altura 50% maior que o esperado              | Uso de `capsuleGeometry`, cuja altura intrínseca é 1,5 unidade, não 1                                        | Troca para `cylinderGeometry`, que mapeia diretamente para o valor de altura pretendido                                                            |
+| Figura humana quase invisível ao lado de modelos grandes (Coliseu)           | A figura escalava proporcionalmente ao modelo, usando a altura do Coliseu como referência fixa               | Figura passou a usar altura real fixa (1,70 m), independente da escala do modelo ancorado (divergência do RNF03 original, documentada na seção 22) |
+| Não é possível testar a interação por toque no overlay WebXR pelo computador | O emulador Immersive Web Emulator usa pointer lock, que captura o clique do mouse antes de chegar ao overlay | Validação de interação feita em dispositivo Android real (Samsung Galaxy S25)                                                                      |
+| Processo construtivo (etapas navegáveis) retirado do escopo do protótipo     | Decisão da equipe de reduzir o escopo diante do tempo disponível para o desenvolvimento                      | RF04 e RF05 removidos; questionário de compreensão (RF09) adaptado para focar em escala e proporção, não em etapas construtivas                    |
+
+---
+
+## 25. Cronograma Técnico
+
+> Seção pendente: será preenchida com base no histórico real de commits e no quadro do Trello.
+
+---
+
+## 26. Controle de Versão
+
+O repositório usa commits pequenos e descritivos, sempre com prefixo de tipo (`feat`, `fix`, `docs`, `refactor`, `chore`, `style`), nunca um commit único reunindo várias frentes.
+
+Cada card do Trello tem um número visível. A convenção de mensagem referencia esse número:
+
+- Commit que cobre o card inteiro: `tipo (#card): mensagem`.
+- Commit que resolve item(ns) específico(s) do checklist do card: `tipo (#card-item1,item2): mensagem`.
+
+O acompanhamento do progresso é feito pelo checklist de cada card no Trello.
