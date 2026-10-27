@@ -188,3 +188,94 @@ README.md                  esta documentação
 ```
 
 Os protótipos em `docs/` ainda são HTML isolados, não conectados ao fluxo principal em `app/src` (ver seção 6, RF09-RF11).
+
+---
+
+## 13. Principais Scripts ou Componentes
+
+| Arquivo               | Responsabilidade                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| `App.tsx`             | Telas e máquina de estados da sessão (início, lista de estruturas, modo RA, modo 2D, conclusão)   |
+| `structures.tsx`      | Dados (dimensões reais) e componentes de carregamento dos modelos 3D (`Structure`, `HumanFigure`) |
+| `counterbalance.ts`   | Define a ordem contrabalanceada das estruturas, cíclica por sessão via `localStorage`             |
+| `main.tsx`            | Ponto de entrada da aplicação React                                                               |
+| `optimize-models.mjs` | Script Node, fora do app, usado pra reduzir polígonos e comprimir texturas dos modelos glTF       |
+
+Dentro de `App.tsx`, os componentes internos mais relevantes:
+
+| Componente      | Responsabilidade                                                                 |
+| --------------- | -------------------------------------------------------------------------------- |
+| `StartScreen`   | Captura o código do participante e a condição experimental (RA ou Bidimensional) |
+| `StructureList` | Mostra a estrutura da vez, na ordem contrabalanceada                             |
+| `Reticle`       | Desenha o indicador de plano detectado via WebXR hit-test                        |
+| `AnchoredModel` | Renderiza a estrutura e a figura humana de referência na posição ancorada        |
+| `SizeControl`   | Controle deslizante de tamanho do modelo, renderizado como `XRDomOverlay`        |
+| `FlatView`      | Tela do modo bidimensional, com a imagem estática da estrutura                   |
+| `FpsMeter`      | Mede a taxa de quadros por segundo (ativado via `?fps` na URL, suporte ao RNF04) |
+
+---
+
+## 14. Dependências
+
+```
+react ^19.2.8
+react-dom ^19.2.8
+@react-three/fiber ^9.8.1
+@react-three/xr ^6.6.31
+@react-three/drei ^10.7.9
+three ^0.186.1
+tailwindcss ^4.3.3
+@tailwindcss/vite ^4.3.3
+@gltf-transform/cli 4.5.1
+@gltf-transform/core 4.5.1
+@gltf-transform/extensions 4.5.1
+@gltf-transform/functions 4.5.1
+meshoptimizer 1.1.1
+sharp 0.35.5
+vite ^6.4.3
+typescript ~6.0.2
+oxlint ^1.81.0
+```
+
+Todas disponíveis via npm, listadas em `app/package.json`.
+
+---
+
+## 15. Configuração do Ambiente
+
+1. Instalar o [Node.js](https://nodejs.org/) (testado com a versão 22).
+2. Clonar o repositório.
+3. Entrar na pasta `app/`.
+4. Instalar as dependências com `npm install`.
+
+Nenhuma variável de ambiente é necessária: o projeto não usa chave de API nem backend próprio.
+
+---
+
+## 16. Como Executar o Projeto
+
+Dentro da pasta `app/`:
+
+```
+npm run dev
+```
+
+Inicia o servidor de desenvolvimento (Vite). Abre o endereço mostrado no terminal em um navegador com suporte à WebXR Device API (Chrome no Android, ou Chrome/Edge no desktop com a extensão Immersive Web Emulator para simular uma sessão AR).
+
+```
+npm run build
+```
+
+Gera a build de produção em `app/dist`, com verificação de tipos (`tsc -b`) antes do build.
+
+```
+npm run lint
+```
+
+Executa o linter (`oxlint`) sobre o código fonte.
+
+```
+npm run models
+```
+
+Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a partir dos modelos originais em `models-src/` (não versionado).
