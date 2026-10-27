@@ -145,3 +145,46 @@ Nesta etapa do projeto, por restrição de escopo (ausência de aprovação éti
 | ----------- | ------------------ | ---------------------------------------------------- | --------------------------------------------------------- |
 | Smartphone  | Samsung Galaxy S25 | Android, suporte à WebXR Device API e ao ARCore      | Validação completa em RA real                             |
 | Computador  | Windows e Linux    | Google Chrome, com a extensão Immersive Web Emulator | Desenvolvimento e testes de interface, sem sessão RA real |
+
+---
+
+## 10. Arquitetura do Sistema
+
+<img src="docs/diagrams/arquitetura.svg" alt="Arquitetura do sistema" width="340" />
+
+---
+
+## 11. Funcionamento da Realidade Aumentada
+
+A abordagem utilizada é markerless, por detecção de superfície (plane detection), via WebXR hit-test. Não há marcador, imagem de referência ou QR Code: o sistema reconhece qualquer plano horizontal detectado no ambiente capturado pela câmera.
+
+Fluxo técnico:
+
+Usuário escolhe a condição RA na tela de início → usuário toca em "Entrar em AR" → o navegador abre uma sessão WebXR `immersive-ar`, solicitando acesso à câmera → a cada quadro, `useXRHitTest` consulta o ARCore por planos detectados na direção em que o dispositivo aponta (`viewer`) → quando há um plano, um retículo (`Reticle`) é desenhado na posição detectada → o usuário toca na tela (evento `select` da sessão XR) → a posição do retículo no momento do toque é fixada como ponto de ancoragem → o modelo glTF da estrutura (via `useGLTF`) é instanciado nessa posição, em escala reduzida (modo maquete) → o usuário ajusta o tamanho pelo controle deslizante, renderizado como um `XRDomOverlay` sobre a cena → o usuário conclui a estrutura e o fluxo avança para a próxima.
+
+---
+
+## 12. Estrutura do Projeto
+
+```
+app/
+├── public/
+│   └── models/          glBs otimizados (coliseu, estátua, cristo, humano)
+├── scripts/
+│   └── optimize-models.mjs   script de otimização dos modelos 3D
+├── src/
+│   ├── App.tsx           telas e máquina de estados da sessão (início, lista, RA, 2D)
+│   ├── structures.tsx     dados e componentes dos modelos 3D
+│   ├── counterbalance.ts  ordem contrabalanceada das estruturas por sessão
+│   ├── main.tsx           ponto de entrada da aplicação
+│   └── index.css          estilos globais (Tailwind)
+docs/
+├── index.html             protótipo do questionário SUS
+├── compreensao/           protótipo do questionário de compreensão
+├── estimativa/            protótipo da tarefa de estimativa de escala
+├── documents/             documentação de licenças e otimização dos modelos
+└── diagrams/              diagramas do projeto (arquitetura)
+README.md                  esta documentação
+```
+
+Os protótipos em `docs/` ainda são HTML isolados, não conectados ao fluxo principal em `app/src` (ver seção 6, RF09-RF11).
