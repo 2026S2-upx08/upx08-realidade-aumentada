@@ -279,3 +279,57 @@ npm run models
 ```
 
 Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a partir dos modelos originais em `models-src/` (não versionado).
+
+---
+
+## 17. Como Utilizar a Aplicação
+
+> Seção pendente: depende de screenshots da aplicação em uso. Será preenchida junto às seções 18, 19 e 23.
+
+---
+
+## 18. Diagramas
+
+> Seção pendente, mesma dependência da seção 17.
+
+---
+
+## 19. Interface da Aplicação
+
+> Seção pendente, mesma dependência da seção 17.
+
+---
+
+## 20. Testes Técnicos
+
+| Teste                                            | Procedimento                                                               | Resultado esperado                                                                   | Resultado obtido                                                                                        | Status |
+| ------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------ |
+| Ancoragem via hit-test                            | Apontar a câmera para uma superfície horizontal e tocar no retículo detectado | Modelo ancorado na posição tocada, sem deslocamento                                     | Ancoragem funcionou conforme esperado, sem deslocamento perceptível                                           | ✅     |
+| Ajuste de escala do modelo                        | Mover o controle deslizante de 1 a 4 metros                                   | Modelo da estrutura escala proporcionalmente; figura humana mantém altura real          | Estrutura escalou corretamente; a primeira versão com a figura humana proporcional ficou quase invisível, corrigida para altura fixa (ver seção 27) | ✅     |
+| Estabilidade do rastreamento                      | Observar o modelo ancorado por alguns minutos, movendo o dispositivo          | Modelo permanece fixo no plano detectado                                                | Sem deslocamento perceptível durante o teste de campo                                                         | ✅     |
+| Ordem contrabalanceada entre sessões               | Completar uma sessão e recarregar a aplicação                                 | A próxima sessão apresenta uma das 6 permutações, diferente da anterior                 | Ordem mudou corretamente entre as sessões testadas                                                            | ✅     |
+| Tela de início e modo bidimensional                | Escolher a condição Bidimensional e percorrer as 3 estruturas                 | Nenhuma permissão de câmera é solicitada; imagem estática exibida em cada estrutura      | Fluxo funcionou sem pedir câmera                                                                               | ✅     |
+| Registro do tempo de exposição                     | Concluir uma sessão completa e checar o console do navegador                  | Tempo de cada estrutura registrado, junto da condição (RA ou 2D)                        | Log exibido corretamente ao final da sessão                                                                   | ✅     |
+| Desempenho (RNF04, mínimo 30 fps)                  | Abrir a aplicação com `?fps` na URL e observar o contador durante uma sessão em RA | Taxa igual ou superior a 30 fps                                                    | Ainda não medido formalmente em dispositivo real                                                              | ⬜     |
+
+**Legenda:** ✅ Validado · 🚧 Em andamento · ⬜ Ainda não testado
+
+---
+
+## 21. Dispositivos Testados
+
+| Dispositivo                                           | O que foi testado                                                                              | Resultado                                                                                           |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Samsung Galaxy S25 (Android, Chrome)                     | Sessão WebXR completa: ancoragem, ajuste de escala, figura humana, troca de estrutura, modo bidimensional | Funcionou conforme esperado nos testes de campo realizados                                              |
+| Windows e Linux (Chrome, extensão Immersive Web Emulator) | Interface, máquina de estados e fluxo de telas, sem sessão WebXR real                               | Suficiente para desenvolvimento e teste de interface; não substitui o teste em dispositivo real para ancoragem e rastreamento (ver seção 22) |
+
+---
+
+## 22. Limitações Conhecidas
+
+- Os testes do protótipo são conduzidos com usuários proxy (colegas de curso), não com o público-alvo real (ver seção 5).
+- A figura humana de referência (RF12) usa uma altura real fixa (1,70 m), em vez de escalar proporcionalmente ao modelo ancorado como previsto originalmente no RNF03. Em testes reais, a escala proporcional tornava a figura quase invisível nos modelos maiores (Coliseu). A divergência está documentada e pendente de revisão no artigo.
+- O emulador Immersive Web Emulator, usado para testar no computador, não permite interagir de forma confiável com os elementos do overlay WebXR (o pointer lock do navegador captura o clique do mouse). Testes de interação dependem de um dispositivo Android real.
+- O modo bidimensional (RF06) ainda não está conectado aos instrumentos de avaliação (SUS, questionário de compreensão), dependência da task de integração (ver seção 6, nota do RF09/RF10).
+- A taxa de quadros (RNF04) ainda não foi validada formalmente em dispositivo real, apesar do contador (`?fps`) já implementado.
+- A validação em dispositivo real foi feita em apenas um smartphone (Samsung Galaxy S25), sem cobertura de aparelhos de entrada ou mais antigos.
