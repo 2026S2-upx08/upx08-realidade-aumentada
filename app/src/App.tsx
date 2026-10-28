@@ -11,14 +11,23 @@ import {
 import { Matrix4, Vector3, type Group } from 'three'
 import { HumanFigure, STRUCTURES, Structure, type StructureId } from './structures'
 import { assignSessionOrder } from './counterbalance'
+import {
+  INSTRUMENTS,
+  clearSession,
+  instrumentUrl,
+  isInstrumentStep,
+  nextStep,
+  resumeSession,
+  saveSession,
+  type Condition,
+  type Session,
+} from './session'
 
 const store = createXRStore({ hitTest: true, domOverlay: true })
 
 const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
-
-type Condition = 'ra' | '2d'
 
 // RNF07: cada visita a uma estrutura fica registrada aqui para comparar o
 // tempo de exposição entre as duas condições (ainda sem export, RF11).
@@ -132,7 +141,7 @@ function SizeControl({
   return (
     <IfInSessionMode allow="immersive-ar">
       <XRDomOverlay>
-        <div className="absolute bottom-6 left-1/2 w-64 -translate-x-1/2 rounded-md bg-white/90 p-3 text-center text-sm shadow-md">
+        <div className="absolute bottom-6 left-1/2 w-64 -translate-x-1/2 rounded-md bg-white/90 p-3 text-center text-gray-900 text-sm shadow-md">
           {fps !== null && <div className="mb-1 text-xs font-medium">{fps} fps</div>}
           <div className="mb-1 flex justify-between text-xs text-gray-600">
             <span>{MIN_SIZE_M} m</span>
@@ -213,7 +222,7 @@ function StartScreen({
         type="button"
         disabled={participantCode.trim() === ''}
         onClick={() => onStart(participantCode, condition)}
-        className="rounded-md bg-white px-6 py-3 text-base font-medium shadow-md disabled:opacity-50"
+        className="rounded-md bg-white px-6 py-3 text-gray-900 text-base font-medium shadow-md disabled:opacity-50"
       >
         Iniciar sessão
       </button>
@@ -249,10 +258,24 @@ function StructureList({
       <button
         type="button"
         onClick={onVisualize}
-        className="rounded-md bg-white px-6 py-3 text-base font-medium shadow-md"
+        className="rounded-md bg-white px-6 py-3 text-gray-900 text-base font-medium shadow-md"
       >
         Visualizar
       </button>
+    </div>
+  )
+}
+
+// Etapa de instrumento (#46): o instrumento abre na mesma aba e, ao terminar,
+// volta para o app, que confere o registro gravado antes de avançar.
+function InstrumentScreen({ label, href }: { label: string; href: string }) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
+      <p className="text-sm text-gray-500">Próxima etapa</p>
+      <h1 className="text-lg font-medium">{label}</h1>
+      <a href={href} className="rounded-md bg-white px-6 py-3 text-gray-900 text-base font-medium shadow-md">
+        Abrir
+      </a>
     </div>
   )
 }
@@ -284,69 +307,111 @@ function FlatView({ structure, onFinish }: { structure: StructureId; onFinish: (
 }
 
 export default function App() {
-  const [order] = useState<StructureId[]>(() => assignSessionOrder())
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [phase, setPhase] = useState<'start' | 'list' | 'ar' | 'flat' | 'done'>('start')
-  const [condition, setCondition] = useState<Condition>('ra')
+  // A sessão sobrevive ao recarregamento causado pela ida aos instrumentos
+  const [session, setSession] = useState<Session | null>(() => resumeSession())
+  const [phase, setPhase] = useState<'list' | 'ar' | 'flat'>('list')
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
   const [fps, setFps] = useState<number | null>(null)
   const [exposureLog, setExposureLog] = useState<ExposureRecord[]>([])
   const visitStartedAt = useRef<number | null>(null)
 
-  const structure = order[currentIndex]
+  function updateSession(next: Session) {
+    saveSession(next)
+    setSession(next)
+  }
 
-  function handleStart(_participantCode: string, selectedCondition: Condition) {
-    // O código do participante será persistido junto aos dados coletados
-    // quando o RF11 (registro e exportação) for implementado.
-    setCondition(selectedCondition)
+  function handleStart(participantCode: string, condition: Condition) {
+    // A ordem é sorteada aqui, e não ao carregar a página: cada volta de um
+    // instrumento recarrega o app e avançaria o contador do contrabalanceamento
+    updateSession({
+      participantId: participantCode.trim(),
+      condition,
+      order: assignSessionOrder(),
+      step: 'estimativa-pre',
+      currentIndex: 0,
+      startedAt: new Date().toISOString(),
+    })
+  }
+
+  function handleNewSession() {
+    clearSession()
+    setSession(null)
+    setExposureLog([])
     setPhase('list')
   }
 
   function handleVisualize() {
+    if (!session) return
     visitStartedAt.current = performance.now()
-    setPhase(condition === 'ra' ? 'ar' : 'flat')
+    setPhase(session.condition === 'ra' ? 'ar' : 'flat')
   }
 
   function handleFinishStructure() {
+    if (!session) return
+    const structure = session.order[session.currentIndex]
     if (visitStartedAt.current !== null) {
       const exposureMs = performance.now() - visitStartedAt.current
-      setExposureLog((log) => [...log, { structure, condition, exposureMs }])
+      setExposureLog((log) => [...log, { structure, condition: session.condition, exposureMs }])
       visitStartedAt.current = null
     }
     setAnchoredAt(null)
     setSizeM(DEFAULT_SIZE_M)
-    if (currentIndex + 1 < order.length) {
-      setCurrentIndex((index) => index + 1)
-      setPhase('list')
+    setPhase('list')
+    if (session.currentIndex + 1 < session.order.length) {
+      updateSession({ ...session, currentIndex: session.currentIndex + 1 })
     } else {
-      setPhase('done')
+      updateSession({ ...session, step: nextStep(session.condition, 'estruturas') })
     }
   }
 
-  if (phase === 'start') {
+  if (!session) {
     return <StartScreen onStart={handleStart} />
   }
 
+  if (isInstrumentStep(session.step)) {
+    return (
+      <InstrumentScreen
+        label={INSTRUMENTS[session.step].label}
+        href={instrumentUrl(session, session.step)}
+      />
+    )
+  }
+
+  if (session.step === 'fim') {
+    console.info('Ordem efetivamente apresentada:', session.order)
+    console.info('Tempo de exposição por estrutura:', exposureLog)
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
+        <p>
+          Sessão concluída. Ordem apresentada:{' '}
+          {session.order.map((id) => STRUCTURES[id].label).join(' → ')}
+        </p>
+        <button
+          type="button"
+          onClick={handleNewSession}
+          className="rounded-md bg-white px-6 py-3 text-gray-900 text-base font-medium shadow-md"
+        >
+          Nova sessão
+        </button>
+      </div>
+    )
+  }
+
+  const structure = session.order[session.currentIndex]
+
   if (phase === 'list') {
-    return <StructureList order={order} currentIndex={currentIndex} onVisualize={handleVisualize} />
+    return (
+      <StructureList
+        order={session.order}
+        currentIndex={session.currentIndex}
+        onVisualize={handleVisualize}
+      />
+    )
   }
 
   if (phase === 'flat') {
     return <FlatView structure={structure} onFinish={handleFinishStructure} />
-  }
-
-  if (phase === 'done') {
-    console.info('Ordem efetivamente apresentada:', order)
-    console.info('Tempo de exposição por estrutura:', exposureLog)
-    return (
-      <div className="flex min-h-screen items-center justify-center p-6 text-center">
-        <p>
-          Sessão concluída. Ordem apresentada:{' '}
-          {order.map((id) => STRUCTURES[id].label).join(' → ')}
-        </p>
-      </div>
-    )
   }
 
   return (
@@ -354,7 +419,7 @@ export default function App() {
       <button
         type="button"
         onClick={() => store.enterAR()}
-        className="absolute top-5 left-1/2 z-10 -translate-x-1/2 rounded-md bg-white px-6 py-3 text-base font-medium shadow-md"
+        className="absolute top-5 left-1/2 z-10 -translate-x-1/2 rounded-md bg-white px-6 py-3 text-gray-900 text-base font-medium shadow-md"
       >
         Entrar em AR
       </button>
