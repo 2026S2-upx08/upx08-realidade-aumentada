@@ -14,8 +14,10 @@ import { assignSessionOrder } from './counterbalance'
 import {
   INSTRUMENTS,
   clearSession,
+  exportColeta,
   instrumentUrl,
   isInstrumentStep,
+  listColeta,
   nextStep,
   resumeSession,
   saveExposure,
@@ -379,6 +381,25 @@ export default function App() {
           Sessão concluída. Ordem apresentada:{' '}
           {session.order.map((id) => STRUCTURES[id].label).join(' → ')}
         </p>
+        <p className="text-sm text-gray-500">
+          {listColeta().length} registros neste aparelho, de todos os participantes
+        </p>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => exportColeta('json')}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium"
+          >
+            Exportar JSON
+          </button>
+          <button
+            type="button"
+            onClick={() => exportColeta('csv')}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium"
+          >
+            Exportar CSV
+          </button>
+        </div>
         <button
           type="button"
           onClick={handleNewSession}

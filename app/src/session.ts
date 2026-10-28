@@ -111,6 +111,76 @@ export function saveExposure(session: Session, startedAt: Date, endedAt: Date) {
   }
 }
 
+export function listColeta(): Record<string, unknown>[] {
+  try {
+    return JSON.parse(localStorage.getItem(COLETA_KEY) ?? '[]')
+  } catch {
+    return []
+  }
+}
+
+// Campos aninhados (respostas, erros, itensCorretos) viram colunas "campo.chave",
+// em qualquer profundidade, para que nenhum instrumento perca dados no CSV único
+function flatten(value: unknown, prefix = '', flat: Record<string, unknown> = {}) {
+  if (value === null || typeof value !== 'object') {
+    flat[prefix] = value
+    return flat
+  }
+  const entries = Array.isArray(value)
+    ? value.map((item, index): [string, unknown] => {
+        // lista de itens com id vira coluna por id: itensCorretos.q1.acertou
+        if (item !== null && typeof item === 'object' && 'id' in item) {
+          const { id, ...rest } = item
+          return [String(id), rest]
+        }
+        return [String(index), item]
+      })
+    : Object.entries(value)
+  for (const [key, sub] of entries) flatten(sub, prefix ? `${prefix}.${key}` : key, flat)
+  return flat
+}
+
+function csvCell(value: unknown) {
+  const text = value === undefined || value === null ? '' : String(value)
+  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
+}
+
+function buildCsv(records: Record<string, unknown>[]) {
+  const rows = records.map((record) => flatten(record))
+  const columns: string[] = []
+  for (const row of rows) {
+    for (const column of Object.keys(row)) if (!columns.includes(column)) columns.push(column)
+  }
+  // mantém cada grupo (respostas.*, erros.*) junto e em ordem numérica: q1, q2, ..., q10
+  const group = (column: string) => column.split('.')[0]
+  const groupOrder = (column: string) => columns.findIndex((c) => group(c) === group(column))
+  columns.sort(
+    (a, b) => groupOrder(a) - groupOrder(b) || a.localeCompare(b, undefined, { numeric: true }),
+  )
+  return [columns.join(','), ...rows.map((row) => columns.map((c) => csvCell(row[c])).join(','))].join('\n')
+}
+
+function download(name: string, content: string, type: string) {
+  const url = URL.createObjectURL(new Blob([content], { type: `${type};charset=utf-8` }))
+  const link = document.createElement('a')
+  link.href = url
+  link.download = name
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(url), 1500)
+}
+
+// RF11: exportação única de tudo o que foi coletado no aparelho (instrumentos e
+// tempo de exposição de todos os participantes)
+export function exportColeta(format: 'json' | 'csv') {
+  const records = listColeta()
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')
+  if (format === 'json') {
+    download(`upx08-coleta-${stamp}.json`, JSON.stringify(records, null, 2), 'application/json')
+  } else {
+    download(`upx08-coleta-${stamp}.csv`, buildCsv(records), 'text/csv')
+  }
+}
+
 export function saveSession(session: Session) {
   try {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(session))
