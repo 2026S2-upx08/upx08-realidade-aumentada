@@ -88,6 +88,29 @@ function isInstrumentDone(session: Session, step: InstrumentStep) {
   }
 }
 
+// RNF07: cada visita a uma estrutura vira um registro em upx08.coleta.v1, junto
+// dos instrumentos, para sobreviver à ida aos instrumentos pós e sair na mesma
+// exportação (RF11)
+export function saveExposure(session: Session, startedAt: Date, endedAt: Date) {
+  const record = {
+    instrumento: 'EXPOSICAO',
+    participanteId: session.participantId,
+    grupo: GROUP_BY_CONDITION[session.condition],
+    estrutura: session.order[session.currentIndex],
+    posicao: session.currentIndex + 1,
+    inicioEm: startedAt.toISOString(),
+    fimEm: endedAt.toISOString(),
+    exposicaoMs: endedAt.getTime() - startedAt.getTime(),
+  }
+  try {
+    const records = JSON.parse(localStorage.getItem(COLETA_KEY) ?? '[]')
+    records.push(record)
+    localStorage.setItem(COLETA_KEY, JSON.stringify(records))
+  } catch (error) {
+    console.error('Tempo de exposição não gravado:', record, error)
+  }
+}
+
 export function saveSession(session: Session) {
   try {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(session))

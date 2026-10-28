@@ -18,6 +18,7 @@ import {
   isInstrumentStep,
   nextStep,
   resumeSession,
+  saveExposure,
   saveSession,
   type Condition,
   type Session,
@@ -28,10 +29,6 @@ const store = createXRStore({ hitTest: true, domOverlay: true })
 const MIN_SIZE_M = 1
 const MAX_SIZE_M = 4
 const DEFAULT_SIZE_M = 2.25
-
-// RNF07: cada visita a uma estrutura fica registrada aqui para comparar o
-// tempo de exposição entre as duas condições (ainda sem export, RF11).
-type ExposureRecord = { structure: StructureId; condition: Condition; exposureMs: number }
 
 // Figura humana fica em 1,70 m reais, fora da escala da maquete (decisão da #40)
 const HUMAN_HALF_WIDTH_M = 0.3
@@ -313,8 +310,7 @@ export default function App() {
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
   const [fps, setFps] = useState<number | null>(null)
-  const [exposureLog, setExposureLog] = useState<ExposureRecord[]>([])
-  const visitStartedAt = useRef<number | null>(null)
+  const visitStartedAt = useRef<Date | null>(null)
 
   function updateSession(next: Session) {
     saveSession(next)
@@ -337,22 +333,19 @@ export default function App() {
   function handleNewSession() {
     clearSession()
     setSession(null)
-    setExposureLog([])
     setPhase('list')
   }
 
   function handleVisualize() {
     if (!session) return
-    visitStartedAt.current = performance.now()
+    visitStartedAt.current = new Date()
     setPhase(session.condition === 'ra' ? 'ar' : 'flat')
   }
 
   function handleFinishStructure() {
     if (!session) return
-    const structure = session.order[session.currentIndex]
     if (visitStartedAt.current !== null) {
-      const exposureMs = performance.now() - visitStartedAt.current
-      setExposureLog((log) => [...log, { structure, condition: session.condition, exposureMs }])
+      saveExposure(session, visitStartedAt.current, new Date())
       visitStartedAt.current = null
     }
     setAnchoredAt(null)
@@ -380,7 +373,6 @@ export default function App() {
 
   if (session.step === 'fim') {
     console.info('Ordem efetivamente apresentada:', session.order)
-    console.info('Tempo de exposição por estrutura:', exposureLog)
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
         <p>
