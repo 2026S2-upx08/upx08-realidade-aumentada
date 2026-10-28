@@ -98,7 +98,7 @@ Nesta etapa do projeto, por restrição de escopo (ausência de aprovação éti
 
 **Legenda:** ✅ Implementado · 🚧 Em desenvolvimento · ⬜ Planejado · ❌ Cancelado
 
-> RF09 e RF10 estão implementados como protótipos HTML isolados (`docs/index.html` e `docs/compreensao/index.html`), ainda não conectados ao fluxo principal da aplicação. A integração ao app React é o objetivo da task "Integrar instrumentos de avaliação ao fluxo do protótipo".
+> RF09 e RF10 estão implementados como protótipos HTML isolados (`app/public/instrumentos/sus/` e `app/public/instrumentos/compreensao/`), ainda não conectados ao fluxo principal da aplicação. A integração ao app React é o objetivo da task "Integrar instrumentos de avaliação ao fluxo do protótipo".
 
 ---
 
@@ -169,7 +169,8 @@ Usuário escolhe a condição RA na tela de início → usuário toca em "Entrar
 ```
 app/
 ├── public/
-│   └── models/          glBs otimizados (coliseu, estátua, cristo, humano)
+│   ├── models/          glBs otimizados (coliseu, estátua, cristo, humano)
+│   └── instrumentos/    questionário SUS, questionário de compreensão e tarefa de estimativa
 ├── scripts/
 │   └── optimize-models.mjs   script de otimização dos modelos 3D
 ├── src/
@@ -179,15 +180,12 @@ app/
 │   ├── main.tsx           ponto de entrada da aplicação
 │   └── index.css          estilos globais (Tailwind)
 docs/
-├── index.html             protótipo do questionário SUS
-├── compreensao/           protótipo do questionário de compreensão
-├── estimativa/            protótipo da tarefa de estimativa de escala
 ├── documents/             documentação de licenças e otimização dos modelos
 └── diagrams/              diagramas do projeto (arquitetura)
 README.md                  esta documentação
 ```
 
-Os protótipos em `docs/` ainda são HTML isolados, não conectados ao fluxo principal em `app/src` (ver seção 6, RF09-RF11).
+Os instrumentos em `app/public/instrumentos/` são publicados junto com o app, mas ainda são HTML isolados, não conectados ao fluxo principal em `app/src` (ver seção 6, RF09-RF11).
 
 ---
 

@@ -1,6 +1,6 @@
 # Questionário de compreensão: itens e gabarito
 
-Documento de referência do instrumento em [`docs/compreensao/index.html`](../compreensao/index.html). O gabarito fica só aqui e no código; a tela nunca mostra acerto, erro ou nota ao participante.
+Documento de referência do instrumento em [`app/public/instrumentos/compreensao/index.html`](../../app/public/instrumentos/compreensao/index.html). O gabarito fica só aqui e no código; a tela nunca mostra acerto, erro ou nota ao participante.
 
 ## Por que os itens mudaram
 
@@ -10,7 +10,7 @@ Foram mantidos a tela, a correção de 0 a 10, a validação, o armazenamento (`
 
 ## Regras de elaboração
 
-1. **Nenhum item cita medida dos monumentos.** O questionário roda na mesma sessão da tarefa de estimativa ([`docs/estimativa/`](../estimativa/index.html)), e qualquer valor exibido aqui contaminaria o erro medido lá.
+1. **Nenhum item cita medida dos monumentos.** O questionário roda na mesma sessão da tarefa de estimativa ([`app/public/instrumentos/estimativa/`](../../app/public/instrumentos/estimativa/index.html)), e qualquer valor exibido aqui contaminaria o erro medido lá.
 2. **Os itens sobre as estruturas são só comparativos** (maior, mais largo, mais alto), sem número.
 3. **Os itens de raciocínio de escala usam números genéricos**, escolhidos longe dos valores de referência da estimativa (45 m, 187 m, 46 m e 38 m) para não ancorar a resposta.
 4. **A posição da alternativa correta varia.** A tela não embaralha as alternativas, então a resposta certa não pode estar sempre no mesmo lugar. Na versão anterior estava sempre na primeira opção.
