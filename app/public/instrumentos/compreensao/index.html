@@ -146,6 +146,7 @@
         <div class="peq" id="detalheNota"></div>
       </div>
       <div class="barra-acoes">
+        <button class="primario oculto" id="continuarSessao">Continuar sessão</button>
         <button class="secundario" id="voltarInicio">Voltar ao início</button>
       </div>
     </div>
@@ -572,6 +573,23 @@ el('conf').addEventListener('click', function(){
 });
 
 atualizarResumo();
+
+/* sessão aberta pelo app (#46): código, grupo e momento chegam pela URL, a tela
+   de abertura é pulada e, ao terminar, o botão leva de volta ao fluxo do app.
+   O destino fica fixo aqui, e não na URL, para não virar redirecionamento aberto. */
+var URL_APP = '/';
+var doApp = new URLSearchParams(location.search);
+if (doApp.get('pid') &&
+    ['experimental', 'controle'].indexOf(doApp.get('grupo')) >= 0 &&
+    ['pre', 'pos'].indexOf(doApp.get('momento')) >= 0){
+  el('pid').value = doApp.get('pid');
+  el('grp').value = doApp.get('grupo');
+  el('mom').value = doApp.get('momento');
+  el('continuarSessao').classList.remove('oculto');
+  el('voltarInicio').classList.add('oculto');
+  el('continuarSessao').addEventListener('click', function(){ location.href = URL_APP; });
+  el('abrir').click();
+}
 </script>
 </body>
 </html>

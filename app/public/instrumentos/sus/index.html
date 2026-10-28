@@ -574,13 +574,21 @@ function telaFinal() {
       '<button id="exp-json">Exportar JSON</button>' +
       '<button id="exp-csv">Exportar CSV</button>' +
     '</div>' +
-    '<div class="acoes"><button id="nova">Nova sessão</button></div>';
+    (veioDoApp
+      ? '<div class="acoes"><button class="cheio" id="continuar">Continuar sessão</button></div>'
+      : '<div class="acoes"><button id="nova">Nova sessão</button></div>');
 
   document.getElementById('exp-json').addEventListener('click', exportarJson);
   document.getElementById('exp-csv').addEventListener('click', exportarCsv);
-  document.getElementById('nova').addEventListener('click', function () {
-    estado.tela = 'inicio'; render();
-  });
+  if (veioDoApp) {
+    document.getElementById('continuar').addEventListener('click', function () {
+      location.href = URL_APP;
+    });
+  } else {
+    document.getElementById('nova').addEventListener('click', function () {
+      estado.tela = 'inicio'; render();
+    });
+  }
 }
 
 /* ---------- render ---------- */
@@ -590,6 +598,21 @@ function render(opcoes) {
   else if (estado.tela === 'questionario') telaQuestionario();
   else telaFinal();
   window.scrollTo(0, y);
+}
+
+// Sessão aberta pelo app (#46): código e grupo chegam pela URL, a tela inicial
+// é pulada e, ao terminar, o botão leva de volta ao fluxo do app. O destino
+// fica fixo aqui, e não na URL, para não virar redirecionamento aberto. O
+// momento não é lido porque o SUS é sempre aplicado no pós.
+var URL_APP = '/';
+var doApp = new URLSearchParams(location.search);
+var veioDoApp = !!doApp.get('pid') &&
+  ['experimental', 'controle'].indexOf(doApp.get('grupo')) !== -1;
+if (veioDoApp) {
+  estado.participanteId = doApp.get('pid');
+  estado.grupo = doApp.get('grupo');
+  estado.inicioEm = new Date();
+  estado.tela = 'questionario';
 }
 
 render();
