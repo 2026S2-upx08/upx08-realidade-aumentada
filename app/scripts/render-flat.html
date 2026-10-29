@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Render do material bidimensional</title>
+<style>html,body{margin:0;background:#eceae6}canvas{display:block}</style>
+</head>
+<body>
+<script type="module">
+// Gera a imagem estática de uma estrutura para o modo bidimensional (#54).
+// Uso: /scripts/render-flat.html?s=coliseu|estatua|cristo
+// Tudo é renderizado em metros reais, então a figura humana de 1,70 m fica
+// automaticamente no mesmo fator de escala da estrutura (RNF03).
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
+
+const LARGURA = 1200
+const ALTURA = 900
+const MARGEM = 0.12        // folga em volta do conjunto, fração do enquadramento
+const VAO_HUMANO_M = 3     // distância real entre a estrutura e a figura
+
+// Giro em torno do eixo vertical para cada estrutura aparecer de frente;
+// ?r=graus sobrescreve, útil para testar o enquadramento
+const ROTACAO_GRAUS = { coliseu: 0, estatua: 270, cristo: 0 }
+
+const params = new URLSearchParams(location.search)
+const id = params.get('s')
+const rotacao = Number(params.get('r') ?? ROTACAO_GRAUS[id] ?? 0)
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
+renderer.setPixelRatio(1)
+renderer.setSize(LARGURA, ALTURA)
+renderer.outputColorSpace = THREE.SRGBColorSpace
+document.body.appendChild(renderer.domElement)
+
+const cena = new THREE.Scene()
+cena.background = new THREE.Color('#eceae6')
+cena.add(new THREE.HemisphereLight('#ffffff', '#8a8378', 1.6))
+const sol = new THREE.DirectionalLight('#ffffff', 2.2)
+sol.position.set(-0.6, 1, 1.2)
+cena.add(sol)
+
+const loader = new GLTFLoader()
+loader.setMeshoptDecoder(MeshoptDecoder)
+const carregar = (url) => new Promise((ok, erro) => loader.load(url, (g) => ok(g.scene), undefined, erro))
+
+const [estrutura, humano] = await Promise.all([
+  carregar('/models/' + id + '.glb'),
+  carregar('/models/humano.glb'),
+])
+
+// Os GLB já estão em metros reais com a base em y = 0 (OTIMIZACAO-MODELOS.md)
+estrutura.rotation.y = THREE.MathUtils.degToRad(rotacao)
+cena.add(estrutura)
+const caixaE = new THREE.Box3().setFromObject(estrutura)
+const caixaH = new THREE.Box3().setFromObject(humano)
+humano.position.x = caixaE.max.x + VAO_HUMANO_M - caixaH.min.x
+humano.position.z = (caixaE.min.z + caixaE.max.z) / 2 - (caixaH.min.z + caixaH.max.z) / 2
+// Cor escura e sem sombreamento: no Coliseu a figura tem poucos pixels e,
+// cinza sobre cinza, desapareceria. Muda só a cor, não a proporção.
+humano.traverse((o) => { if (o.isMesh) o.material = new THREE.MeshBasicMaterial({ color: '#1b2a3a' }) })
+cena.add(humano)
+
+// Câmera ortográfica em vista lateral (x na horizontal, y na vertical): sem
+// perspectiva, a proporção entre estrutura e figura não depende da distância
+const caixa = new THREE.Box3().setFromObject(cena)
+const w = caixa.max.x - caixa.min.x
+const h = caixa.max.y
+const larguraVista = Math.max(w, h * (LARGURA / ALTURA)) / (1 - MARGEM * 2)
+const alturaVista = larguraVista * (ALTURA / LARGURA)
+// Conjunto centralizado na vertical, com pelo menos MARGEM de chão embaixo
+const folgaChao = Math.max(alturaVista * MARGEM, (alturaVista - h) / 2)
+const cx = (caixa.min.x + caixa.max.x) / 2
+const camera = new THREE.OrthographicCamera(
+  -larguraVista / 2, larguraVista / 2, alturaVista - folgaChao, -folgaChao, 0.1, 5000,
+)
+camera.position.set(cx, 0, caixa.max.z + 1000)
+camera.lookAt(cx, 0, caixa.max.z)
+
+// Faixa de chão, sem marcação nem número
+const chao = new THREE.Mesh(
+  new THREE.PlaneGeometry(larguraVista * 2, folgaChao * 2),
+  new THREE.MeshBasicMaterial({ color: '#cfcac2' }),
+)
+chao.position.set(cx, -folgaChao, caixa.min.z - 1)
+cena.add(chao)
+
+renderer.render(cena, camera)
+document.title = 'pronto'
+</script>
+</body>
+</html>
