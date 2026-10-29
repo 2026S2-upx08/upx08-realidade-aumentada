@@ -283,16 +283,18 @@ function InstrumentScreen({ label, href }: { label: string; href: string }) {
 // modo RA, mas sem renderizar o modelo tridimensional ancorado (RNF07,
 // equivalência entre as condições).
 //
-// PENDENTE: a imagem estática exibida aqui ainda é um placeholder, a ser
-// substituída pela renderização real de cada estrutura.
+// As imagens saem dos mesmos GLB da RA, com a figura humana no mesmo fator
+// de escala da estrutura e sem nenhum número (npm run flat, #54).
 function FlatView({ structure, onFinish }: { structure: StructureId; onFinish: () => void }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
-      <div className="flex h-64 w-full max-w-xs items-center justify-center rounded-md bg-gray-200 text-center text-sm text-gray-500">
-        Imagem estática do {STRUCTURES[structure].label}
-        <br />
-        (placeholder, pendente renderização real)
-      </div>
+      <img
+        src={`/flat/${structure}.webp`}
+        alt={STRUCTURES[structure].label}
+        width={1200}
+        height={900}
+        className="h-auto w-full max-w-xl rounded-md"
+      />
       <h1 className="text-lg font-medium">{STRUCTURES[structure].label}</h1>
       <button
         type="button"
