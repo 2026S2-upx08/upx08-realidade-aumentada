@@ -294,13 +294,28 @@ Roda o script `scripts/render-flat.mjs`, que gera as imagens estáticas do modo 
 
 ## 17. Como Utilizar a Aplicação
 
-> Seção pendente: depende de screenshots da aplicação em uso. Será preenchida junto às seções 18, 19 e 23.
+Do ponto de vista do participante:
+
+1. Abrir a aplicação e informar o código do participante e a condição experimental (RA ou Bidimensional) na tela de início.
+2. Responder a tarefa de estimativa de escala e o questionário de compreensão, ambos no pré-teste (cada instrumento abre em sua própria tela).
+3. Na lista de estruturas, tocar em "Visualizar" para a estrutura da vez.
+4. Na condição RA: apontar o celular para uma superfície plana até o retículo aparecer, tocar na tela para ancorar o modelo, ajustar o tamanho pelo controle deslizante e tocar em "Concluir estrutura". Na condição Bidimensional: observar a imagem estática da estrutura e tocar em "Concluir estrutura".
+5. Repetir os passos 3 e 4 para as outras duas estruturas, na ordem contrabalanceada definida pelo sistema.
+6. Responder a tarefa de estimativa e o questionário de compreensão, agora no pós-teste.
+7. Na condição RA, responder também o questionário SUS de usabilidade.
+8. Na tela final, conferir a ordem apresentada, exportar os dados coletados (JSON ou CSV) e, se necessário, iniciar uma nova sessão.
+
+> Screenshots de cada passo serão adicionados junto à seção 19.
 
 ---
 
 ## 18. Diagramas
 
-> Seção pendente, mesma dependência da seção 17.
+Fluxo de funcionamento da sessão, da tela de início à exportação dos dados:
+
+<img src="docs/diagrams/fluxo-sessao.svg" alt="Fluxo de funcionamento da sessão" width="420" />
+
+O diagrama de arquitetura do sistema está na seção 10.
 
 ---
 

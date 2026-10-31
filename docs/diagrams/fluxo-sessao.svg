@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 900" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow2" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#333" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="480" height="900" fill="#ffffff" />
+
+  <!-- Início -->
+  <rect x="90" y="10" width="300" height="60" rx="8" fill="#f5f5f5" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="37" text-anchor="middle" font-size="14">Início da sessão</text>
+  <text x="240" y="55" text-anchor="middle" font-size="11" fill="#555">código do participante + condição (RA/2D)</text>
+
+  <line x1="240" y1="70" x2="240" y2="104" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+
+  <!-- Estimativa pré -->
+  <rect x="90" y="110" width="300" height="70" rx="8" fill="#e8f0fe" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="138" text-anchor="middle" font-size="14">Estimativa de escala</text>
+  <text x="240" y="158" text-anchor="middle" font-size="11" fill="#555">pré-teste (instrumento)</text>
+
+  <line x1="240" y1="180" x2="240" y2="214" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+
+  <!-- Compreensão pré -->
+  <rect x="90" y="220" width="300" height="70" rx="8" fill="#e8f0fe" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="248" text-anchor="middle" font-size="14">Questionário de compreensão</text>
+  <text x="240" y="268" text-anchor="middle" font-size="11" fill="#555">pré-teste (instrumento)</text>
+
+  <line x1="240" y1="290" x2="240" y2="324" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+
+  <!-- Estruturas -->
+  <rect x="90" y="330" width="300" height="80" rx="8" fill="#fef3e0" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="356" text-anchor="middle" font-size="14">Estruturas (×3)</text>
+  <text x="240" y="374" text-anchor="middle" font-size="11" fill="#555">RA: modelo 3D ancorado</text>
+  <text x="240" y="390" text-anchor="middle" font-size="11" fill="#555">Bidimensional: imagem estática</text>
+
+  <!-- Loop: ordem contrabalanceada, repete 3x -->
+  <path d="M 390,350 C 440,350 440,390 390,390" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+  <text x="447" y="374" text-anchor="middle" font-size="11" fill="#555">×3</text>
+
+  <line x1="240" y1="410" x2="240" y2="444" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+
+  <!-- Estimativa pós -->
+  <rect x="90" y="450" width="300" height="70" rx="8" fill="#e8f0fe" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="478" text-anchor="middle" font-size="14">Estimativa de escala</text>
+  <text x="240" y="498" text-anchor="middle" font-size="11" fill="#555">pós-teste (instrumento)</text>
+
+  <line x1="240" y1="520" x2="240" y2="554" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+
+  <!-- Compreensão pós -->
+  <rect x="90" y="560" width="300" height="70" rx="8" fill="#e8f0fe" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="588" text-anchor="middle" font-size="14">Questionário de compreensão</text>
+  <text x="240" y="608" text-anchor="middle" font-size="11" fill="#555">pós-teste (instrumento)</text>
+
+  <line x1="240" y1="630" x2="240" y2="664" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+  <text x="256" y="650" text-anchor="start" font-size="11" fill="#555">RA</text>
+
+  <!-- SUS: só RA -->
+  <rect x="90" y="670" width="300" height="70" rx="8" fill="#fde8e8" stroke="#333" stroke-width="1.5" stroke-dasharray="6 4" />
+  <text x="240" y="698" text-anchor="middle" font-size="14">Questionário SUS</text>
+  <text x="240" y="718" text-anchor="middle" font-size="11" fill="#555">somente condição RA</text>
+
+  <line x1="240" y1="740" x2="240" y2="774" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+
+  <!-- Bypass: Bidimensional pula o SUS -->
+  <path d="M 390,595 C 450,595 450,815 390,815" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow2)" />
+  <text x="458" y="705" text-anchor="middle" font-size="11" fill="#555" transform="rotate(90 458 705)">Bidimensional (sem SUS)</text>
+
+  <!-- Fim -->
+  <rect x="90" y="780" width="300" height="70" rx="8" fill="#f5f5f5" stroke="#333" stroke-width="1.5" />
+  <text x="240" y="808" text-anchor="middle" font-size="14">Fim da sessão</text>
+  <text x="240" y="828" text-anchor="middle" font-size="11" fill="#555">exportação dos dados (JSON/CSV)</text>
+</svg>
