@@ -85,20 +85,20 @@ Nesta etapa do projeto, por restrição de escopo (ausência de aprovação éti
 | ---- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | RF01 | Ancorar o modelo tridimensional     | Ancora o modelo da estrutura selecionada sobre um plano detectado no ambiente físico, via WebXR hit-test, em modo maquete          | ✅     |
 | RF02 | Ajustar o tamanho do modelo         | Permite ajustar o tamanho do modelo ancorado entre 1 e 4 metros no maior eixo, calculado a partir da altura real de cada estrutura | ✅     |
-| RF03 | Apresentar a estrutura da vez       | Apresenta cada estrutura (Coliseu, Estátua da Liberdade, Cristo Redentor) na ordem contrabalanceada definida pelo sistema          | ⬜     |
-| RF04 | Navegar pelas etapas construtivas   | Permite avançar e retroceder entre as etapas do processo construtivo, mantendo o modelo ancorado                                   | ⬜     |
-| RF05 | Exibir overlay informativo          | Exibe painel com texto e imagens de referência sobre a etapa construtiva em exibição                                               | ⬜     |
-| RF06 | Apresentar modo bidimensional       | Apresenta, ao grupo de controle, o mesmo conteúdo em formato de imagem plana, sem o modelo 3D                                      | ⬜     |
-| RF07 | Aplicar tarefa de estimativa        | Coleta a estimativa de dimensões e proporções de cada estrutura, antes e depois do uso                                             | ⬜     |
-| RF08 | Aplicar tarefa de ordenação         | Apresenta as etapas construtivas embaralhadas para o participante reordenar                                                        | ⬜     |
-| RF09 | Aplicar questionário de compreensão | Questionário de compreensão sobre o processo construtivo, em formato pré-teste e pós-teste                                         | 🚧     |
-| RF10 | Aplicar questionário SUS            | Questionário de usabilidade (SUS), aplicado apenas ao grupo experimental                                                           | 🚧     |
-| RF11 | Registrar e exportar dados          | Registra as respostas e interações da sessão, exportando em JSON e CSV                                                             | ⬜     |
+| RF03 | Apresentar a estrutura da vez       | Apresenta cada estrutura (Coliseu, Estátua da Liberdade, Cristo Redentor) na ordem contrabalanceada definida pelo sistema          | ✅     |
+| RF04 | Navegar pelas etapas construtivas   | Permite avançar e retroceder entre as etapas do processo construtivo, mantendo o modelo ancorado                                   | ❌     |
+| RF05 | Exibir overlay informativo          | Exibe painel com texto e imagens de referência sobre a etapa construtiva em exibição                                               | ❌     |
+| RF06 | Apresentar modo bidimensional       | Apresenta, ao grupo de controle, o mesmo conteúdo em formato de imagem plana, sem o modelo 3D                                      | ✅     |
+| RF07 | Aplicar tarefa de estimativa        | Coleta a estimativa de dimensões e proporções de cada estrutura, antes e depois do uso                                             | ✅     |
+| RF08 | Aplicar tarefa de ordenação         | Apresenta as etapas construtivas embaralhadas para o participante reordenar                                                        | ❌     |
+| RF09 | Aplicar questionário de compreensão | Questionário de compreensão sobre o processo construtivo, em formato pré-teste e pós-teste                                         | ✅     |
+| RF10 | Aplicar questionário SUS            | Questionário de usabilidade (SUS), aplicado apenas ao grupo experimental                                                           | ✅     |
+| RF11 | Registrar e exportar dados          | Registra as respostas e interações da sessão, exportando em JSON e CSV                                                             | ✅     |
 | RF12 | Exibir figura humana de referência  | Exibe uma figura humana em escala real (1,70 m) ao lado do modelo ancorado, como referência visual de tamanho                      | ✅     |
 
 **Legenda:** ✅ Implementado · 🚧 Em desenvolvimento · ⬜ Planejado · ❌ Cancelado
 
-> RF09 e RF10 estão implementados como protótipos HTML isolados (`app/public/instrumentos/sus/` e `app/public/instrumentos/compreensao/`), ainda não conectados ao fluxo principal da aplicação. A integração ao app React é o objetivo da task "Integrar instrumentos de avaliação ao fluxo do protótipo".
+> RF04, RF05 e RF08 foram cancelados: a equipe removeu a navegação por etapas construtivas do escopo do protótipo e do artigo (ver seção 24). RF09 e RF10 estão conectados ao fluxo principal da aplicação (`app/public/instrumentos/compreensao/` e `app/public/instrumentos/sus/`, abertos e retomados automaticamente pela máquina de estados de sessão em `session.ts`).
 
 ---
 
@@ -171,45 +171,51 @@ app/
 ├── public/
 │   ├── models/          glBs otimizados (coliseu, estátua, cristo, humano)
 │   └── instrumentos/    questionário SUS, questionário de compreensão e tarefa de estimativa
+│   └── flat/             imagens estáticas do modo bidimensional, geradas via `npm run flat`
 ├── scripts/
-│   └── optimize-models.mjs   script de otimização dos modelos 3D
+│   ├── optimize-models.mjs   script de otimização dos modelos 3D
+│   └── render-flat.mjs       gera as imagens do modo bidimensional a partir dos GLB da RA
 ├── src/
-│   ├── App.tsx           telas e máquina de estados da sessão (início, lista, RA, 2D)
+│   ├── App.tsx           telas e componentes de UI (início, lista, RA, 2D, instrumentos)
+│   ├── session.ts        máquina de estados da sessão, persistência e exportação dos dados
 │   ├── structures.tsx     dados e componentes dos modelos 3D
 │   ├── counterbalance.ts  ordem contrabalanceada das estruturas por sessão
 │   ├── main.tsx           ponto de entrada da aplicação
 │   └── index.css          estilos globais (Tailwind)
 docs/
-├── documents/             documentação de licenças e otimização dos modelos
+├── documents/             documentação de licenças, otimização dos modelos e material 2D
 └── diagrams/              diagramas do projeto (arquitetura)
 README.md                  esta documentação
 ```
 
-Os instrumentos em `app/public/instrumentos/` são publicados junto com o app, mas ainda são HTML isolados, não conectados ao fluxo principal em `app/src` (ver seção 6, RF09-RF11).
+Os instrumentos em `app/public/instrumentos/` são publicados junto com o app e já estão conectados ao fluxo principal em `app/src` (ver seção 6, RF09-RF11): a máquina de estados em `session.ts` abre cada instrumento na mesma aba e confere o registro gravado antes de avançar.
 
 ---
 
 ## 13. Principais Scripts ou Componentes
 
-| Arquivo               | Responsabilidade                                                                                  |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| `App.tsx`             | Telas e máquina de estados da sessão (início, lista de estruturas, modo RA, modo 2D, conclusão)   |
-| `structures.tsx`      | Dados (dimensões reais) e componentes de carregamento dos modelos 3D (`Structure`, `HumanFigure`) |
-| `counterbalance.ts`   | Define a ordem contrabalanceada das estruturas, cíclica por sessão via `localStorage`             |
-| `main.tsx`            | Ponto de entrada da aplicação React                                                               |
-| `optimize-models.mjs` | Script Node, fora do app, usado pra reduzir polígonos e comprimir texturas dos modelos glTF       |
+| Arquivo               | Responsabilidade                                                                                                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `App.tsx`             | Telas e componentes de UI (início, lista de estruturas, modo RA, modo 2D, instrumentos, conclusão)                   |
+| `session.ts`          | Máquina de estados da sessão (etapas, instrumentos), persistência entre recarregamentos e exportação JSON/CSV (RF11) |
+| `structures.tsx`      | Dados (dimensões reais) e componentes de carregamento dos modelos 3D (`Structure`, `HumanFigure`)                    |
+| `counterbalance.ts`   | Define a ordem contrabalanceada das estruturas, cíclica por sessão via `localStorage`                                |
+| `main.tsx`            | Ponto de entrada da aplicação React                                                                                  |
+| `optimize-models.mjs` | Script Node, fora do app, usado pra reduzir polígonos e comprimir texturas dos modelos glTF                          |
+| `render-flat.mjs`     | Script Node, fora do app, gera as imagens estáticas do modo bidimensional a partir dos GLB da RA                     |
 
 Dentro de `App.tsx`, os componentes internos mais relevantes:
 
-| Componente      | Responsabilidade                                                                 |
-| --------------- | -------------------------------------------------------------------------------- |
-| `StartScreen`   | Captura o código do participante e a condição experimental (RA ou Bidimensional) |
-| `StructureList` | Mostra a estrutura da vez, na ordem contrabalanceada                             |
-| `Reticle`       | Desenha o indicador de plano detectado via WebXR hit-test                        |
-| `AnchoredModel` | Renderiza a estrutura e a figura humana de referência na posição ancorada        |
-| `SizeControl`   | Controle deslizante de tamanho do modelo, renderizado como `XRDomOverlay`        |
-| `FlatView`      | Tela do modo bidimensional, com a imagem estática da estrutura                   |
-| `FpsMeter`      | Mede a taxa de quadros por segundo (ativado via `?fps` na URL, suporte ao RNF04) |
+| Componente         | Responsabilidade                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| `StartScreen`      | Captura o código do participante e a condição experimental (RA ou Bidimensional)                |
+| `StructureList`    | Mostra a estrutura da vez, na ordem contrabalanceada                                            |
+| `InstrumentScreen` | Tela de transição para abrir um instrumento de avaliação (estimativa, compreensão ou SUS)       |
+| `Reticle`          | Desenha o indicador de plano detectado via WebXR hit-test                                       |
+| `AnchoredModel`    | Renderiza a estrutura e a figura humana de referência na posição ancorada                       |
+| `SizeControl`      | Controle deslizante de tamanho do modelo, renderizado como `XRDomOverlay`                       |
+| `FlatView`         | Tela do modo bidimensional, com a imagem estática real da estrutura (gerada via `npm run flat`) |
+| `FpsMeter`         | Mede a taxa de quadros por segundo (ativado via `?fps` na URL, suporte ao RNF04)                |
 
 ---
 
@@ -278,6 +284,12 @@ npm run models
 
 Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a partir dos modelos originais em `models-src/` (não versionado).
 
+```
+npm run flat
+```
+
+Roda o script `scripts/render-flat.mjs`, que gera as imagens estáticas do modo bidimensional (`public/flat/*.webp`) a partir dos mesmos GLB usados na RA. Requer o Google Chrome instalado.
+
 ---
 
 ## 17. Como Utilizar a Aplicação
@@ -328,9 +340,9 @@ Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a 
 - Os testes do protótipo são conduzidos com usuários proxy (colegas de curso), não com o público-alvo real (ver seção 5).
 - A figura humana de referência (RF12) usa uma altura real fixa (1,70 m), em vez de escalar proporcionalmente ao modelo ancorado como previsto originalmente no RNF03. Em testes reais, a escala proporcional tornava a figura quase invisível nos modelos maiores (Coliseu). A divergência está documentada e pendente de revisão no artigo.
 - O emulador Immersive Web Emulator, usado para testar no computador, não permite interagir de forma confiável com os elementos do overlay WebXR (o pointer lock do navegador captura o clique do mouse). Testes de interação dependem de um dispositivo Android real.
-- O modo bidimensional (RF06) ainda não está conectado aos instrumentos de avaliação (SUS, questionário de compreensão), dependência da task de integração (ver seção 6, nota do RF09/RF10).
 - A taxa de quadros (RNF04) ainda não foi validada formalmente em dispositivo real, apesar do contador (`?fps`) já implementado.
 - A validação em dispositivo real foi feita em apenas um smartphone (Samsung Galaxy S25), sem cobertura de aparelhos de entrada ou mais antigos.
+- No modo bidimensional, a figura humana é renderizada na escala proporcional da imagem (não em 1,70 m fixos como na RA), já que uma imagem estática não permite a mesma referência de tamanho real. Isso diverge da escolha feita para a RA e afeta a equivalência exigida pelo RNF07 entre as duas condições, pendente de decisão da equipe (ver `docs/documents/MATERIAL-BIDIMENSIONAL.md`).
 
 ---
 
@@ -347,7 +359,7 @@ Roda o script de otimização dos modelos 3D (`scripts/optimize-models.mjs`), a 
 | Figura humana de referência com altura 50% maior que o esperado              | Uso de `capsuleGeometry`, cuja altura intrínseca é 1,5 unidade, não 1                                        | Troca para `cylinderGeometry`, que mapeia diretamente para o valor de altura pretendido                                                            |
 | Figura humana quase invisível ao lado de modelos grandes (Coliseu)           | A figura escalava proporcionalmente ao modelo, usando a altura do Coliseu como referência fixa               | Figura passou a usar altura real fixa (1,70 m), independente da escala do modelo ancorado (divergência do RNF03 original, documentada na seção 22) |
 | Não é possível testar a interação por toque no overlay WebXR pelo computador | O emulador Immersive Web Emulator usa pointer lock, que captura o clique do mouse antes de chegar ao overlay | Validação de interação feita em dispositivo Android real (Samsung Galaxy S25)                                                                      |
-| Processo construtivo (etapas navegáveis) retirado do escopo do protótipo     | Decisão da equipe de reduzir o escopo diante do tempo disponível para o desenvolvimento                      | RF04 e RF05 removidos; questionário de compreensão (RF09) adaptado para focar em escala e proporção, não em etapas construtivas                    |
+| Processo construtivo (etapas navegáveis) retirado do escopo do protótipo     | Decisão da equipe de reduzir o escopo diante do tempo disponível para o desenvolvimento                      | RF04, RF05 e RF08 removidos; questionário de compreensão (RF09) adaptado para focar em escala e proporção, não em etapas construtivas              |
 
 ---
 
