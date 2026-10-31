@@ -239,6 +239,11 @@ sharp 0.35.5
 vite ^6.4.3
 typescript ~6.0.2
 oxlint ^1.81.0
+@vitejs/plugin-react ^4.7.0
+@types/node ^24.13.3
+@types/react ^19.2.18
+@types/react-dom ^19.2.7
+@types/three ^0.186.0
 ```
 
 Todas disponíveis via npm, listadas em `app/package.json`.
