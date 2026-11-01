@@ -263,7 +263,9 @@ Nenhuma variável de ambiente é necessária: o projeto não usa chave de API ne
 
 ## 16. Como Executar o Projeto
 
-Dentro da pasta `app/`:
+A aplicação está em produção na Vercel, sem necessidade de instalar nada: [upx08-realidade-aumentada.vercel.app](https://upx08-realidade-aumentada.vercel.app/). Abrir num navegador Android com suporte à WebXR Device API (Chrome) para a sessão RA completa.
+
+Para rodar localmente, dentro da pasta `app/`:
 
 ```
 npm run dev
