@@ -310,7 +310,7 @@ Do ponto de vista do participante:
 7. Na condição RA, responder também o questionário SUS de usabilidade.
 8. Na tela final, conferir a ordem apresentada, exportar os dados coletados (JSON ou CSV) e, se necessário, iniciar uma nova sessão.
 
-> Screenshots de cada passo serão adicionados junto à seção 19.
+> Screenshots de cada passo estão na seção 19 (Interface da Aplicação).
 
 ---
 
@@ -326,7 +326,47 @@ O diagrama de arquitetura do sistema está na seção 10.
 
 ## 19. Interface da Aplicação
 
-> Seção pendente, mesma dependência da seção 17.
+As imagens abaixo cobrem as duas condições do experimento. As telas de instrumento (estimativa, compreensão, SUS) e o fluxo geral são as mesmas nas duas condições; só a tela de estrutura muda.
+
+### Fluxo geral
+
+| Imagem | Tela | Elementos principais | Ação do usuário |
+| --- | --- | --- | --- |
+| ![Início da sessão](docs/images/fluxo/tela_inicio.jpeg) | Início da sessão | Campo de código do participante, escolha de condição (RA / Bidimensional), botão "Iniciar sessão" | Preenche o código e escolhe a condição antes de iniciar |
+| ![Lista de estruturas](docs/images/fluxo/visualizar_estruturas.jpeg) | Estruturas | Campos com as três estruturas na ordem contrabalanceada da sessão, botão "Visualizar" | Confirma a ordem e abre a primeira estrutura |
+| ![Sessão concluída](docs/images/fluxo/sessao_concluida.jpeg) | Fim da sessão | Ordem apresentada, contagem de registros no aparelho, botões "Exportar JSON" / "Exportar CSV", botão "Nova sessão" | Exporta os dados coletados (RF11) ou inicia uma nova sessão |
+
+### Estruturas em RA
+
+| Imagem | Tela | Elementos principais | Ação do usuário |
+| --- | --- | --- | --- |
+| ![Coliseu em RA](docs/images/estruturas/ra/coliseu.jpeg) | Coliseu ancorado | Modelo 3D ancorado no ambiente real, figura humana de referência (1,70 m), controle de escala (1-4 m) | Caminha ao redor do modelo e ajusta a escala |
+| ![Cristo Redentor em RA](docs/images/estruturas/ra/cristo_redentor.jpeg) | Cristo Redentor ancorado | Modelo 3D ancorado, figura humana de referência, controle de escala | Caminha ao redor do modelo e ajusta a escala |
+| ![Estátua da Liberdade em RA](docs/images/estruturas/ra/estatua_liberdade.jpeg) | Estátua da Liberdade ancorada | Modelo 3D ancorado, figura humana de referência, controle de escala, botão "Concluir estrutura" | Ajusta a escala e confirma para seguir à próxima estrutura |
+
+### Estruturas no modo bidimensional
+
+| Imagem | Tela | Elementos principais | Ação do usuário |
+| --- | --- | --- | --- |
+| ![Coliseu em 2D](docs/images/estruturas/2d/coliseu.png) | Coliseu (imagem estática) | Imagem renderizada do modelo, nome da estrutura, botão "Concluir estrutura" | Observa a imagem e confirma para seguir à próxima estrutura |
+| ![Cristo Redentor em 2D](docs/images/estruturas/2d/cristo_redentor.png) | Cristo Redentor (imagem estática) | Imagem renderizada do modelo, nome da estrutura, botão "Concluir estrutura" | Observa a imagem e confirma para seguir à próxima estrutura |
+| ![Estátua da Liberdade em 2D](docs/images/estruturas/2d/estatua_liberdade.png) | Estátua da Liberdade (imagem estática) | Imagem renderizada do modelo, nome da estrutura, botão "Concluir estrutura" | Observa a imagem e confirma para seguir à próxima estrutura |
+
+### Instrumentos
+
+Cada instrumento (estimativa de escala, questionário de compreensão, SUS) segue o mesmo padrão de três telas: formulário, confirmação de registro e transição para a próxima etapa.
+
+| Imagem | Tela | Elementos principais | Ação do usuário |
+| --- | --- | --- | --- |
+| ![Estimativa de escala](docs/images/instrumentos/estimativa/estimativa_dimensoes.jpeg) | Estimativa de escala | Campos numéricos em metros para cada estrutura, sem resposta visível | Preenche as estimativas a partir da memória |
+| ![Estimativa de escala concluída](docs/images/instrumentos/estimativa/estimativa_dimensoes_concluido.jpeg) | Estimativa de escala concluída | Confirmação de registro, botão "Continuar sessão" | Confirma e devolve o aparelho ao pesquisador |
+| ![Transição para a estimativa](docs/images/instrumentos/estimativa/estimativa_dimensoes_tela.jpeg) | Transição para instrumento | Nome da próxima etapa, botão "Abrir" | Abre o instrumento na mesma aba |
+| ![Questionário de compreensão](docs/images/instrumentos/compreensao/questionario_compreensao.jpeg) | Questionário de compreensão | Perguntas de múltipla escolha comparando as três estruturas, contador de progresso, botão "Concluir" | Responde cada questão e conclui o questionário |
+| ![Questionário de compreensão concluído](docs/images/instrumentos/compreensao/questionario_compreensao_concluido.jpeg) | Questionário de compreensão concluído | Confirmação de registro, botão "Continuar sessão" | Confirma e devolve o aparelho ao pesquisador |
+| ![Transição para a compreensão](docs/images/instrumentos/compreensao/questionario_compreensao_tela.jpeg) | Transição para instrumento | Nome da próxima etapa, botão "Abrir" | Abre o instrumento na mesma aba |
+| ![Questionário SUS](docs/images/instrumentos/sus/questionario_sus.jpeg) | Questionário SUS | Escala de concordância 1-5 por afirmação, identificação do participante | Indica o grau de concordância com cada afirmação |
+| ![Questionário SUS concluído](docs/images/instrumentos/sus/questionario_sus_concluido.jpeg) | Questionário SUS concluído | Confirmação de registro, botões "Exportar JSON" / "Exportar CSV", botão "Continuar sessão" | Confirma, exporta se desejar, e segue para o fim da sessão |
+| ![Transição para o SUS](docs/images/instrumentos/sus/questionario_sus_tela.jpeg) | Transição para instrumento | Nome da próxima etapa, botão "Abrir" | Abre o instrumento na mesma aba |
 
 ---
 
@@ -368,7 +408,9 @@ O diagrama de arquitetura do sistema está na seção 10.
 
 ## 23. Evidências de Funcionamento
 
-> Seção pendente: depende de screenshot, gif ou vídeo real da aplicação em uso. Será preenchida junto às seções 17, 18 e 19.
+Vídeo completo do fluxo da sessão em RA, gravado em dispositivo real (Samsung Galaxy S25): [youtube.com/watch?v=GlAZ7T2fNL0](https://www.youtube.com/watch?v=GlAZ7T2fNL0)
+
+Screenshots de cada etapa, RA e bidimensional, estão na seção 19 (Interface da Aplicação).
 
 ---
 
