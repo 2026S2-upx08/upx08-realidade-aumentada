@@ -8,15 +8,26 @@ O artigo é escrito fora deste repositório, no modelo oficial `.docx` da discip
 - `internal_docs/05-avaliacao-professor-entrega.md` — feedback do professor sobre a **v2** do artigo (a mais recente avaliada), 13 pontos de melhoria.
 - `internal_docs/annotated-UPx08...pdf` — a v2 do artigo que foi avaliada (texto completo, pra conferir o que exatamente foi escrito).
 - `internal_docs/06-proxima-entrega-artigo.md` — enunciado da entrega final (v3): revisão integral + Resultados + Discussão + Conclusão.
+- `internal_docs/entrega_artigo_att.txt` — texto do enunciado da entrega final, usado na revisão.
+- `internal_docs/task-83-textos-artigo.md` — os trechos exatos que entraram no artigo no card #83 (Introdução, RQ1/H1, objetivos, quadros, RFs, Resumo e Abstract).
+- `docs/images/artigo/` — Figura 1 (arquitetura) e Figura 2 (wireframes) do artigo, em PNG e SVG, já sem o processo construtivo. Esta pasta é versionada, ao contrário de `internal_docs/`.
 
-## O problema maior: artigo e protótipo saíram de sincronia
+## Sincronia entre artigo e protótipo (resolvida no card #83)
 
-A v2 do artigo (avaliada pelo professor) ainda descreve o processo construtivo navegável (RQ2, H2, RF04/RF05/RF08, tarefa de ordenação de etapas) como parte central da pesquisa. Mas o protótipo **já cancelou isso** depois dessa avaliação (ver `01-prototipo-estado-atual.md`). O professor nem chegou a comentar essa contradição especificamente (ela é posterior ao feedback dele), mas o enunciado da entrega final é claro: _"a versão final não poderá apresentar contradições entre a proposta inicial, a metodologia realizada e os resultados obtidos"_. Então essa é a correção mais importante e que precisa vir **antes** de quase todas as outras, porque muda RQ/H/objetivos/instrumentos/requisitos em cascata.
+A v2 do artigo (avaliada pelo professor) descrevia o processo construtivo navegável (RQ2, H2, RF04/RF05/RF08, tarefa de ordenação de etapas) como parte central da pesquisa, mas o protótipo cancelou isso depois dessa avaliação (ver `01-prototipo-estado-atual.md`). O enunciado da entrega final exige que _"a versão final não poderá apresentar contradições entre a proposta inicial, a metodologia realizada e os resultados obtidos"_.
+
+O card #83 (Fase 1) resolveu isso em 2026-11-04. A decisão foi **remover o processo construtivo da pesquisa**, sem mantê-lo como hipótese não avaliada. O artigo passou a ter uma única questão (RQ1) e uma única hipótese (H1), ambas sobre escala. O processo construtivo aparece só como fora de escopo (Introdução e seção 4.2) e como trabalho futuro (Considerações finais, e depois Limitações e Conclusão). Mudaram junto: objetivos, Quadros de métricas, de evidências e de testes, RF04/RF05/RF08 (não listados, com a numeração dos demais mantida), Figuras 1 e 2, Resumo, Abstract e título. O README do repositório recebeu a mesma correção.
+
+Se mexer no artigo, não reintroduza etapas, ordenação, RQ2 ou H2. O questionário de compreensão mede escala e proporção (`docs/documents/ITENS-COMPREENSAO.md`), e o material bidimensional é só a imagem da estrutura, sem texto (`docs/documents/MATERIAL-BIDIMENSIONAL.md`).
+
+### Contradição que continua aberta: figura humana
+
+O artigo (RNF03, linha "Referência de escala" da matriz de equivalência e o teste do RF12) diz que a figura humana acompanha o fator de escala do modelo. O app usa **1,70 m fixos** na RA, e no modo 2D a figura é proporcional à imagem (README, seções 22 e 24). É o ponto 4 do feedback do professor, que ele marcou como prioridade, e continua dependendo da decisão do time.
 
 ## Os 13 pontos do feedback do professor (resumo; texto completo no `05`)
 
 1. Delimitar o público-alvo (usuários proxy vs. público real da BNCC).
-2. Precisar a interpretação do efeito da RA em H1/H2 (não é só rastreamento isolado).
+2. Precisar a interpretação do efeito da RA em H1/H2 (não é só rastreamento isolado). Hoje só existe H1, ver a seção acima.
 3. Ampliar a fundamentação teórica (só 3 trabalhos relacionados, sem quadro comparativo).
 4. Resolver a inconsistência de escala da figura humana/maquete (**prioridade do professor**).
 5. Elaborar matriz de equivalência entre as condições RA e bidimensional.
@@ -43,15 +54,15 @@ Além de corrigir os 13 pontos acima, a entrega final (`06`) exige seções que 
 
 ## Plano de tasks
 
-Esse trabalho foi quebrado em 22 cards (prefixo `ARTIGO -`) organizados em 8 fases por dependência, definidas em 2026-11-03. Os cards ainda não foram criados no Trello, precisam ser adicionados manualmente (título, descrição e checklist de cada um foram definidos nessa data; se não estiver mais à mão, vale reconstruir a partir dos 13 pontos do `05` e das seções pendentes do `06` listadas acima).
+Esse trabalho foi quebrado em 22 cards (prefixo `ARTIGO -`) organizados em 8 fases por dependência, definidas em 2026-11-03. Os cards são criados manualmente no Trello (o #83 corresponde à Fase 1). Se algum não existir ou o título e o checklist se perderem, vale reconstruir a partir dos 13 pontos do `05` e das seções pendentes do `06` listadas acima. Confira no quadro quais já foram concluídos, porque esta lista não acompanha o status de cada card.
 
 ### Ordem de dependência
 
 **Fase 1 — Decisão estrutural (trava quase tudo o resto)**
 
-1. Remover o processo construtivo (RQ2/H2) do artigo, alinhando com o corte de escopo do protótipo.
+1. Remover o processo construtivo (RQ2/H2) do artigo, alinhando com o corte de escopo do protótipo. **Concluída em 2026-11-04 (card #83).**
 
-**Fase 2 — Ajustes conceituais da pesquisa (paralelo entre si, depois da Fase 1)** 2. Resolver a inconsistência conceitual da escala da maquete e da figura humana. 3. Delimitar o alcance da avaliação com usuários proxy na Introdução e na Metodologia. 4. Precisar a interpretação do efeito da RA nas hipóteses H1 e H2. 5. Definir amostra, alocação e contrabalanceamento dos participantes.
+**Fase 2 — Ajustes conceituais da pesquisa (paralelo entre si, depois da Fase 1)** 2. Resolver a inconsistência conceitual da escala da maquete e da figura humana. 3. Delimitar o alcance da avaliação com usuários proxy na Introdução e na Metodologia. 4. Precisar a interpretação do efeito da RA na hipótese H1. 5. Definir amostra, alocação e contrabalanceamento dos participantes.
 
 **Fase 3 — Especificação técnica (depende da Fase 1 e 2, principalmente da 2)** 6. Detalhar e atualizar os instrumentos de coleta conforme o escopo atual. 7. Elaborar matriz de equivalência experimental entre as condições RA e bidimensional. 8. Definir critérios de aceitação mensuráveis para os requisitos não funcionais. 9. Atualizar o diagrama de arquitetura e padronizar os nomes das bibliotecas. 10. Detalhar os procedimentos de teste técnico com critérios de aprovação mensuráveis. 11. Corrigir o plano de análise estatística para o delineamento com medidas repetidas.
 
