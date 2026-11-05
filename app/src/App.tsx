@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import {
   XR,
@@ -13,6 +13,7 @@ import { HumanFigure, STRUCTURES, Structure, type StructureId } from './structur
 import { allocationOf, classifyCode, LISTED_CODES } from './allocation'
 import { assignSessionOrder } from './counterbalance'
 import {
+  EXPOSURE_SECONDS,
   INSTRUMENTS,
   clearSession,
   exportColeta,
@@ -39,6 +40,38 @@ const HUMAN_GAP_M = 0.3
 
 // Contador de FPS para o teste do RNF04, ativado abrindo o app com ?fps
 const SHOW_FPS = new URLSearchParams(window.location.search).has('fps')
+
+// Segundos restantes da exposição (#106); null enquanto ela não começou. Ao
+// zerar, chama onDone uma única vez.
+function useCountdown(startedAt: number | null, onDone: () => void) {
+  const [now, setNow] = useState(() => Date.now())
+  const onDoneRef = useRef(onDone)
+
+  useEffect(() => {
+    onDoneRef.current = onDone
+  })
+
+  useEffect(() => {
+    if (startedAt === null) return
+    const id = setInterval(() => {
+      const current = Date.now()
+      setNow(current)
+      if (current - startedAt >= EXPOSURE_SECONDS * 1000) {
+        clearInterval(id)
+        onDoneRef.current()
+      }
+    }, 250)
+    return () => clearInterval(id)
+  }, [startedAt])
+
+  if (startedAt === null) return null
+  const remaining = Math.ceil((EXPOSURE_SECONDS * 1000 - (now - startedAt)) / 1000)
+  return Math.min(EXPOSURE_SECONDS, Math.max(0, remaining))
+}
+
+function formatSeconds(seconds: number) {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+}
 
 // Fator único: a altura real da estrutura passa a medir sizeM
 function getScale(structure: StructureId, sizeM: number) {
@@ -129,14 +162,14 @@ function SizeControl({
   sizeM,
   scale,
   fps,
+  remaining,
   onChange,
-  onFinish,
 }: {
   sizeM: number
   scale: number
   fps: number | null
+  remaining: number | null
   onChange: (value: number) => void
-  onFinish: () => void
 }) {
   return (
     <IfInSessionMode allow="immersive-ar">
@@ -159,13 +192,11 @@ function SizeControl({
             onChange={(event) => onChange(Number(event.target.value))}
             className="w-full"
           />
-          <button
-            type="button"
-            onClick={onFinish}
-            className="mt-2 w-full rounded-md bg-black px-3 py-2 text-xs font-medium text-white"
-          >
-            Concluir estrutura
-          </button>
+          <div className="mt-2 text-xs font-medium">
+            {remaining === null
+              ? 'Toque no chão para posicionar o modelo'
+              : `Tempo restante ${formatSeconds(remaining)}`}
+          </div>
         </div>
       </XRDomOverlay>
     </IfInSessionMode>
@@ -350,7 +381,17 @@ function InstrumentScreen({ label, href }: { label: string; href: string }) {
 //
 // As imagens saem dos mesmos GLB da RA, com a figura humana no mesmo fator
 // de escala da estrutura e sem nenhum número (npm run flat, #54).
-function FlatView({ structure, onFinish }: { structure: StructureId; onFinish: () => void }) {
+//
+// A exposição começa quando a imagem termina de carregar (#106).
+function FlatView({
+  structure,
+  remaining,
+  onShown,
+}: {
+  structure: StructureId
+  remaining: number | null
+  onShown: () => void
+}) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
       <img
@@ -358,16 +399,14 @@ function FlatView({ structure, onFinish }: { structure: StructureId; onFinish: (
         alt={STRUCTURES[structure].label}
         width={1200}
         height={900}
+        onLoad={onShown}
+        onError={onShown}
         className="h-auto w-full max-w-xl rounded-md"
       />
       <h1 className="text-lg font-medium">{STRUCTURES[structure].label}</h1>
-      <button
-        type="button"
-        onClick={onFinish}
-        className="rounded-md bg-black px-6 py-3 text-base font-medium text-white shadow-md"
-      >
-        Concluir estrutura
-      </button>
+      <p className="text-sm text-gray-500">
+        {remaining === null ? 'Carregando…' : `Tempo restante ${formatSeconds(remaining)}`}
+      </p>
     </div>
   )
 }
@@ -379,7 +418,10 @@ export default function App() {
   const [anchoredAt, setAnchoredAt] = useState<Vector3 | null>(null)
   const [sizeM, setSizeM] = useState(DEFAULT_SIZE_M)
   const [fps, setFps] = useState<number | null>(null)
-  const visitStartedAt = useRef<Date | null>(null)
+  // Abertura da estrutura (para medir a ancoragem na RA) e início da exposição
+  const visitOpenedAt = useRef<Date | null>(null)
+  const [exposureStartedAt, setExposureStartedAt] = useState<number | null>(null)
+  const remaining = useCountdown(exposureStartedAt, handleFinishStructure)
 
   function updateSession(next: Session) {
     saveSession(next)
@@ -413,16 +455,30 @@ export default function App() {
 
   function handleVisualize() {
     if (!session) return
-    visitStartedAt.current = new Date()
+    visitOpenedAt.current = new Date()
+    setExposureStartedAt(null)
     setPhase(session.condition === 'ra' ? 'ar' : 'flat')
   }
 
+  // A exposição só começa uma vez por estrutura: reancorar não reinicia o tempo
+  function startExposure() {
+    setExposureStartedAt((current) => current ?? Date.now())
+  }
+
+  function handleAnchor(position: Vector3) {
+    setAnchoredAt(position)
+    startExposure()
+  }
+
   function handleFinishStructure() {
-    if (!session) return
-    if (visitStartedAt.current !== null) {
-      saveExposure(session, visitStartedAt.current, new Date())
-      visitStartedAt.current = null
-    }
+    if (!session || exposureStartedAt === null) return
+    const anchoringMs =
+      session.condition === 'ra' && visitOpenedAt.current !== null
+        ? exposureStartedAt - visitOpenedAt.current.getTime()
+        : undefined
+    saveExposure(session, new Date(exposureStartedAt), new Date(), anchoringMs)
+    visitOpenedAt.current = null
+    setExposureStartedAt(null)
     setAnchoredAt(null)
     setSizeM(DEFAULT_SIZE_M)
     setPhase('list')
@@ -497,7 +553,7 @@ export default function App() {
   }
 
   if (phase === 'flat') {
-    return <FlatView structure={structure} onFinish={handleFinishStructure} />
+    return <FlatView structure={structure} remaining={remaining} onShown={startExposure} />
   }
 
   return (
@@ -513,7 +569,7 @@ export default function App() {
         <XR store={store}>
           <ambientLight intensity={1} />
           <directionalLight position={[1, 2, 1]} />
-          <Reticle onSelect={setAnchoredAt} />
+          <Reticle onSelect={handleAnchor} />
           {SHOW_FPS && <FpsMeter onUpdate={setFps} />}
           {anchoredAt && (
             <Suspense fallback={null}>
@@ -524,8 +580,8 @@ export default function App() {
             sizeM={sizeM}
             scale={getScale(structure, sizeM)}
             fps={fps}
+            remaining={remaining}
             onChange={setSizeM}
-            onFinish={handleFinishStructure}
           />
         </XR>
       </Canvas>

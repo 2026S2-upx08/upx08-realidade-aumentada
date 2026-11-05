@@ -90,10 +90,16 @@ function isInstrumentDone(session: Session, step: InstrumentStep) {
   }
 }
 
-// RNF07: cada visita a uma estrutura vira um registro em upx08.coleta.v1, junto
-// dos instrumentos, para sobreviver à ida aos instrumentos pós e sair na mesma
-// exportação (RF11)
-export function saveExposure(session: Session, startedAt: Date, endedAt: Date) {
+// RNF07: tempo de exposição igual por estrutura nas duas condições (#106). Conta
+// a partir de quando a estrutura aparece: a imagem carregada no 2D, a primeira
+// ancoragem na RA. Ao fim do tempo o app avança sozinho.
+export const EXPOSURE_SECONDS = 60
+
+// Cada visita a uma estrutura vira um registro em upx08.coleta.v1, junto dos
+// instrumentos, para sobreviver à ida aos instrumentos pós e sair na mesma
+// exportação (RF11). Na RA, ancoragemMs é o tempo entre abrir a estrutura e
+// ancorar o modelo, que fica fora da exposição.
+export function saveExposure(session: Session, startedAt: Date, endedAt: Date, anchoringMs?: number) {
   const record = {
     instrumento: 'EXPOSICAO',
     participanteId: session.participantId,
@@ -103,7 +109,9 @@ export function saveExposure(session: Session, startedAt: Date, endedAt: Date) {
     posicao: session.currentIndex + 1,
     inicioEm: startedAt.toISOString(),
     fimEm: endedAt.toISOString(),
+    tempoDefinidoS: EXPOSURE_SECONDS,
     exposicaoMs: endedAt.getTime() - startedAt.getTime(),
+    ancoragemMs: anchoringMs,
   }
   try {
     const records = JSON.parse(localStorage.getItem(COLETA_KEY) ?? '[]')
