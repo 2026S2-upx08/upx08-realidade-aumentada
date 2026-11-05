@@ -16,6 +16,8 @@ export type Session = {
   participantId: string
   condition: Condition
   order: StructureId[]
+  // código da lista que este participante substitui (P13 em diante, seção 3.3)
+  substitui?: string
   step: Step
   currentIndex: number
   startedAt: string
@@ -96,6 +98,7 @@ export function saveExposure(session: Session, startedAt: Date, endedAt: Date) {
     instrumento: 'EXPOSICAO',
     participanteId: session.participantId,
     grupo: GROUP_BY_CONDITION[session.condition],
+    substitui: session.substitui,
     estrutura: session.order[session.currentIndex],
     posicao: session.currentIndex + 1,
     inicioEm: startedAt.toISOString(),

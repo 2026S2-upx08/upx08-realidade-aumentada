@@ -10,6 +10,7 @@ import {
 } from '@react-three/xr'
 import { Matrix4, Vector3, type Group } from 'three'
 import { HumanFigure, STRUCTURES, Structure, type StructureId } from './structures'
+import { allocationOf, classifyCode, LISTED_CODES } from './allocation'
 import { assignSessionOrder } from './counterbalance'
 import {
   INSTRUMENTS,
@@ -173,13 +174,54 @@ function SizeControl({
 
 // Tela inicial (4.9/Figura 2a do artigo): o pesquisador informa o código do
 // participante e a condição experimental antes de a sessão começar.
+//
+// O pesquisador digita o código e a condição da lista de alocação; a ordem das
+// estruturas vem do código (seção 3.3, #105). Condição diferente da lista trava
+// o início, para nenhum participante rodar no grupo errado.
 function StartScreen({
   onStart,
 }: {
-  onStart: (participantCode: string, condition: Condition) => void
+  onStart: (start: {
+    participantId: string
+    condition: Condition
+    order: StructureId[] | null
+    substitui?: string
+  }) => void
 }) {
   const [participantCode, setParticipantCode] = useState('')
   const [condition, setCondition] = useState<Condition>('ra')
+  const [replaced, setReplaced] = useState('')
+
+  const code = classifyCode(participantCode)
+  const listed =
+    code.kind === 'lista' ? code : code.kind === 'substituto' && replaced ? allocationOf(replaced) : null
+  const conditionLabel = (c: Condition) => (c === 'ra' ? 'RA' : 'Bidimensional')
+
+  let notice = ''
+  let blocked = participantCode.trim() === ''
+  if (code.kind === 'invalido') {
+    notice = 'Código inválido.'
+    blocked = true
+  } else if (code.kind === 'substituto' && !replaced) {
+    notice = 'Escolha qual código este participante substitui.'
+    blocked = true
+  } else if (code.kind === 'teste' && participantCode.trim() !== '') {
+    notice = 'Código fora da lista: sessão de teste, ordem pelo contador do aparelho.'
+  }
+  if (listed && listed.condition !== condition) {
+    notice = `Pela lista, este código é do grupo ${conditionLabel(listed.condition)}.`
+    blocked = true
+  }
+
+  function handleStart() {
+    if (code.kind === 'invalido') return
+    onStart({
+      participantId: code.code,
+      condition,
+      order: listed ? listed.order : null,
+      substitui: code.kind === 'substituto' ? replaced : undefined,
+    })
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
@@ -216,11 +258,34 @@ function StartScreen({
             Bidimensional
           </label>
         </fieldset>
+        {code.kind === 'substituto' && (
+          <label className="block text-sm">
+            Substitui qual código?
+            <select
+              value={replaced}
+              onChange={(event) => setReplaced(event.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            >
+              <option value="">Escolher</option>
+              {LISTED_CODES.map((listedCode) => (
+                <option key={listedCode} value={listedCode}>
+                  {listedCode}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        {listed && (
+          <p className="text-sm text-gray-500">
+            Ordem: {listed.order.map((id) => STRUCTURES[id].label).join(' → ')}
+          </p>
+        )}
+        {notice && <p className="text-sm text-amber-700">{notice}</p>}
       </div>
       <button
         type="button"
-        disabled={participantCode.trim() === ''}
-        onClick={() => onStart(participantCode, condition)}
+        disabled={blocked}
+        onClick={handleStart}
         className="rounded-md bg-white px-6 py-3 text-gray-900 text-base font-medium shadow-md disabled:opacity-50"
       >
         Iniciar sessão
@@ -321,13 +386,19 @@ export default function App() {
     setSession(next)
   }
 
-  function handleStart(participantCode: string, condition: Condition) {
-    // A ordem é sorteada aqui, e não ao carregar a página: cada volta de um
-    // instrumento recarrega o app e avançaria o contador do contrabalanceamento
+  function handleStart(start: {
+    participantId: string
+    condition: Condition
+    order: StructureId[] | null
+    substitui?: string
+  }) {
+    // Códigos de teste usam o contador; ele só avança aqui, e não ao carregar a
+    // página, porque cada volta de um instrumento recarrega o app
     updateSession({
-      participantId: participantCode.trim(),
-      condition,
-      order: assignSessionOrder(),
+      participantId: start.participantId,
+      condition: start.condition,
+      order: start.order ?? assignSessionOrder(),
+      substitui: start.substitui,
       step: 'estimativa-pre',
       currentIndex: 0,
       startedAt: new Date().toISOString(),
