@@ -20,16 +20,16 @@ O card #83 (Fase 1) resolveu isso em 2026-11-04. A decisão foi **remover o proc
 
 Se mexer no artigo, não reintroduza etapas, ordenação, RQ2 ou H2. O questionário de compreensão mede escala e proporção (`docs/documents/ITENS-COMPREENSAO.md`), e o material bidimensional é só a imagem da estrutura, sem texto (`docs/documents/MATERIAL-BIDIMENSIONAL.md`).
 
-### Contradição que continua aberta: figura humana
+### Figura humana: resolvido (ponto 4 do feedback do professor)
 
-O artigo (RNF03, linha "Referência de escala" da matriz de equivalência e o teste do RF12) diz que a figura humana acompanha o fator de escala do modelo. O app usa **1,70 m fixos** na RA, e no modo 2D a figura é proporcional à imagem (README, seções 22 e 24). É o ponto 4 do feedback do professor, que ele marcou como prioridade, e continua dependendo da decisão do time.
+O app usa **1,70 m fixos** na RA e figura proporcional à imagem no modo 2D (README, seções 22 e 24). O time avaliou as duas formas de unificar esse comportamento entre condições (fixo nos dois, ou proporcional nos dois) e descartou ambas: fixo no 2D exigiria desenhar a figura com dezenas de metros de altura na imagem pra manter a mesma proporção visual da RA (fisicamente absurdo); proporcional na RA deixaria a figura com poucos centímetros, imperceptível. A divergência foi mantida e documentada como limitação assumida do desenho experimental, com a justificativa completa na seção 3.3 (parágrafo após o Quadro 1), no RNF03 (seguindo só na RA), na exceção registrada no RNF07, e no Quadro 4 (casos de teste separados pra RA e 2D, RF12). Sem mudança de código.
 
 ## Os 13 pontos do feedback do professor (resumo; texto completo no `05`)
 
 1. Delimitar o público-alvo (usuários proxy vs. público real da BNCC).
 2. Precisar a interpretação do efeito da RA em H1/H2 (não é só rastreamento isolado). Hoje só existe H1, ver a seção acima.
 3. Ampliar a fundamentação teórica (só 3 trabalhos relacionados, sem quadro comparativo).
-4. Resolver a inconsistência de escala da figura humana/maquete (**prioridade do professor**).
+4. Resolver a inconsistência de escala da figura humana/maquete (**prioridade do professor**). **Resolvido**, ver seção acima.
 5. Elaborar matriz de equivalência entre as condições RA e bidimensional.
 6. Definir amostra, alocação e contrabalanceamento dos participantes.
 7. Detalhar os instrumentos de coleta (como tratar erros, quantidade de itens, critérios de correção).
@@ -44,8 +44,8 @@ O artigo (RNF03, linha "Referência de escala" da matriz de equivalência e o te
 
 Além de corrigir os 13 pontos acima, a entrega final (`06`) exige seções que ainda não existem:
 
-- Consolidação da metodologia como o que foi _realmente_ executado (não só planejado).
-- Coleta de dados real com participantes pra validar a PoC (evidências técnicas + de execução de tarefas + de percepção).
+- ~~Consolidação da metodologia como o que foi _realmente_ executado (não só planejado)~~ Concluída (Fase 6, card #97).
+- ~~Coleta de dados real com participantes pra validar a PoC~~ Concluída (Fase 5), dados em `docs/results/Coleta.csv`. A Fase 7 abaixo já pode começar.
 - Seção de Resultados (caracterização da avaliação, resultados técnicos, resultados com participantes).
 - Discussão dos resultados (interpretação crítica, não repetição de números).
 - Limitações da avaliação.
@@ -68,12 +68,14 @@ Esse trabalho foi quebrado em 22 cards (prefixo `ARTIGO -`) organizados em 8 fas
 
 **Fase 4 — Independentes, podem rodar em paralelo com 1-3** 12. Ampliar a fundamentação teórica e montar quadro comparativo dos trabalhos relacionados. 13. Criar seção de aspectos éticos da pesquisa.
 
-**Fase 5 — Coleta de dados (começa quando a Fase 3 e o item 13 estiverem minimamente resolvidos; pode rodar em paralelo com as fases 2-4 se as sessões já estiverem acontecendo)** 14. Planejar e executar a coleta de dados com participantes para validação da PoC.
+**Fase 5 — Coleta de dados. Concluída em 2026-11-05 (card #96).** 14. Planejar e executar a coleta de dados com participantes para validação da PoC. 12 participantes diferentes (6 RA, 6 2D), 3 a 5 de novembro de 2026, dados em `docs/results/Coleta.csv`. Contrabalanceamento conferido: as 6 ordens de apresentação aparecem exatamente uma vez em cada grupo.
 
-**Fase 6 — Consolidação da metodologia (junta tudo que mudou nas fases 1-3)** 15. Revisar e consolidar a metodologia conforme o que foi efetivamente executado.
+**Fase 6 — Consolidação da metodologia (junta tudo que mudou nas fases 1-3). Concluída em 2026-11-06 (card #97).** 15. Revisar e consolidar a metodologia conforme o que foi efetivamente executado. Seção 3.3 com a coleta real (datas, amostra, confirmação do contrabalanceamento), seções 4.1 e 4.7 em tempo verbal de execução (não mais de proposta), e seção 4.8 com o parágrafo "Resultados já obtidos" reescrito: registra o bug do RF02 (escala calculada pela altura em vez do maior eixo, ver `01-prototipo-estado-atual.md`), a correção, e confirma que o ensaio técnico final foi concluído antes da coleta, não depois.
 
-**Fase 7 — Resultados em diante (depende da Fase 5 com dados reais em mãos)** 16. Escrever a seção de Resultados. 17. Escrever a seção de Discussão dos Resultados. 18. Escrever a seção de Limitações da Avaliação. 19. Escrever a Conclusão.
+**Fase 7 — Resultados em diante (depende da Fase 5 com dados reais em mãos). Pendente com o resto do time.** 16. Escrever a seção de Resultados. 17. Escrever a seção de Discussão dos Resultados. 18. Escrever a seção de Limitações da Avaliação. 19. Escrever a Conclusão. Os dados já existem (`docs/results/Coleta.csv`), essas 4 cards não têm mais bloqueio técnico, só falta escrever.
 
 **Fase 8 — Fechamento** 20. Atualizar Resumo e Abstract com os resultados finais. 21. Corrigir formatação institucional e escrita acadêmica. 22. Revisão final de coerência entre proposta, metodologia e resultados.
+
+Dos itens do #103 (21), quatro são independentes da Fase 7 e podem ser adiantados a qualquer momento: remover as datas fictícias de "Submetido em"/"Aceito em", corrigir sobrescrito e separação dos nomes dos autores, aumentar o texto dos componentes pequenos da Figura 1, e qualificar afirmações categóricas sobre as limitações do 2D. Os demais itens do #103 (correspondência de citações, padronização ABNT, migração pro `.docx` oficial, conferência do limite de 12 páginas) e praticamente todo o #104 (22) dependem da Fase 7 estar pronta, porque checam o documento completo.
 
 A única que não trava em sequência rígida é a coleta de dados (14): se as sessões reais já estiverem rodando, pode começar bem antes, em paralelo com as fases 2-4 — só não dá pra fechar os Resultados (16) sem ela e sem a Fase 3 definida (os instrumentos mudam com o item 1).

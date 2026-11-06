@@ -12,18 +12,18 @@ Máquina de estados em `app/src/session.ts`. Etapas, na ordem: `estimativa-pre` 
 
 ## O que está implementado (RF) e por quê
 
-- **Ancoragem e escala** (RF01, RF02): hit-test WebXR, modelo em modo maquete, ajustável de 1 a 4 m.
+- **Ancoragem e escala** (RF01, RF02): hit-test WebXR, modelo em modo maquete, ajustável de 1 a 4 m. **Correção importante**: `getScale` em `App.tsx` escalava pela altura (`sizeM[1]`) em vez do maior eixo real da estrutura. Não afetava Estátua da Liberdade nem Cristo Redentor (maior eixo já é a altura), mas fazia o Coliseu (mais comprido que alto) ultrapassar a faixa de 1 a 4 m: no tamanho padrão de 2,25 m, o comprimento saía com 9,35 m, maior que a sala. Corrigido para `Math.max(...sizeM)`, batendo com o que o RF02 sempre exigiu ("no maior eixo"). Encontrado e corrigido antes do ensaio técnico final e da coleta real.
 - **Ordem contrabalanceada das estruturas** (RF03): decidida pelo sistema, não pelo participante. **Atenção**: existe um card no Trello (`DEV - Decidir entre ordem contrabalanceada ou seleção livre das estruturas`, ainda em Backlog) discutindo se isso deveria mudar. O código já implementa contrabalanceada como se a decisão estivesse tomada — vale o time confirmar formalmente e fechar esse card.
 - **Modo bidimensional** (RF06): imagens estáticas reais, renderizadas a partir dos mesmos GLB da RA (`npm run flat`, script `app/scripts/render-flat.mjs`), pra manter a mesma geometria entre condições (RNF07). Documentado em `docs/documents/MATERIAL-BIDIMENSIONAL.md`.
 - **Instrumentos** (RF09, RF10): questionário de compreensão (focado em escala/proporção, não mais em processo construtivo — ver abaixo) e SUS (só grupo RA).
 - **Exportação** (RF11): JSON e CSV, achatando campos aninhados, uma exportação única reunindo todos os registros do aparelho.
-- **Figura humana de referência** (RF12): **altura real fixa, 1,70 m**, independente da escala do modelo ancorado. Importante: isso já passou por uma mudança de decisão (antes era proporcional ao modelo, e ficava quase invisível em estruturas grandes como o Coliseu — ver seção 24/Problemas do README). O artigo científico, na última versão avaliada, ainda descreve isso de forma inconsistente (ora real, ora proporcional) — é uma das correções pendentes mais importantes (ver `02-artigo-cientifico.md`).
+- **Figura humana de referência** (RF12): **altura real fixa, 1,70 m** na RA, independente da escala do modelo ancorado; proporcional à imagem no modo 2D. Essa divergência entre condições foi avaliada e mantida deliberadamente, não é mais uma inconsistência em aberto: unificar nos dois sentidos cria problemas piores (figura de dezenas de metros na imagem 2D pra manter a mesma proporção visual da RA, ou figura de poucos centímetros, imperceptível, se a RA virasse proporcional). O artigo documenta isso como limitação assumida do desenho experimental, com a justificativa técnica completa (seção 3.3, Quadro 1, RNF07), e o Quadro 4 tem casos de teste separados pra RA e pra 2D.
 
 ## O que foi cancelado e por quê
 
 **RF04 (navegação entre etapas construtivas), RF05 (painel informativo da etapa) e RF08 (tarefa de ordenação das etapas)** foram removidos do escopo. Motivo: redução de escopo por tempo disponível. Isso significa que o protótipo hoje **não trata mais do processo construtivo (RQ2/H2) de forma alguma** — só da escala (RQ1/H1). O questionário de compreensão foi adaptado pra focar em escala/proporção (commits `#75-1,2,3,4`).
 
-**Consequência que ainda não foi resolvida**: o artigo científico avaliado pelo professor foi escrito _antes_ desse corte de escopo, e ainda trata o processo construtivo como parte central da pesquisa. Isso é uma contradição real entre o artigo e o artefato — tratado em detalhe em `02-artigo-cientifico.md`.
+**Consequência, resolvida no card #83 (2026-11-04)**: o artigo científico avaliado pelo professor tinha sido escrito _antes_ desse corte de escopo, e ainda tratava o processo construtivo como parte central da pesquisa. O time removeu o processo construtivo do artigo, alinhando com o protótipo — detalhes em `02-artigo-cientifico.md`.
 
 ## Estrutura de pastas (resumo; completo no README)
 
@@ -46,9 +46,11 @@ docs/
 └── images/        screenshots (fluxo/, instrumentos/, estruturas/ra|2d/)
 ```
 
+## Coleta de dados real (concluída)
+
+A coleta com participantes reais aconteceu entre 3 e 5 de novembro de 2026, no Samsung Galaxy S25 usado na validação técnica. 12 pessoas diferentes, 6 no grupo experimental (RA) e 6 no grupo controle (2D), cada uma participando uma única vez, batendo com o esquema de contrabalanceamento (as 6 ordens de apresentação das 3 estruturas, cada uma usada exatamente uma vez por grupo). Dados exportados em `docs/results/Coleta.csv`, um registro por instrumento/etapa (ESTIMATIVA pré/pós, COMPREENSAO pré/pós, EXPOSICAO por estrutura, SUS só no grupo experimental). O ensaio técnico final (trena, estabilidade sob diferentes iluminações e superfícies, taxa de quadros e tempo de carregamento) foi concluído antes da coleta, já com a correção do RF02 aplicada.
+
 ## Limitações conhecidas (resumo; completo na seção 22 do README)
 
 - Testes feitos com usuários proxy (colegas de curso), não com o público-alvo real (Ensino Fundamental) — sem aprovação ética ainda pra isso.
-- Validação real feita em um único smartphone (Samsung Galaxy S25).
-- Taxa de quadros (RNF04, mínimo 30 fps) ainda não validada formalmente em dispositivo real.
-- Figura humana no modo 2D é proporcional à imagem (não fixa em 1,70 m como na RA) — diverge da RA e afeta a equivalência exigida pelo RNF07 entre as condições. Pendente de decisão do time.
+- Validação real e coleta feitas em um único smartphone (Samsung Galaxy S25).
