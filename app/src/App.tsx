@@ -73,9 +73,9 @@ function formatSeconds(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 }
 
-// Fator único: a altura real da estrutura passa a medir sizeM
+// Fator único: o maior eixo real da estrutura passa a medir sizeM (RF02)
 function getScale(structure: StructureId, sizeM: number) {
-  return sizeM / STRUCTURES[structure].sizeM[1]
+  return sizeM / Math.max(...STRUCTURES[structure].sizeM)
 }
 
 function Reticle({ onSelect }: { onSelect: (position: Vector3) => void }) {
