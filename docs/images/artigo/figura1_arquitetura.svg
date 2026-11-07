@@ -1,52 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1150" viewBox="0 0 1000 1150">
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="1170" viewBox="0 0 1050 1170">
 <defs><marker id="arr" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#333"/></marker></defs>
-<rect width="1000" height="1150" fill="#fff"/>
-<text x="500.0" y="58" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold" fill="#222" text-anchor="middle">Arquitetura da Solução</text>
-<rect x="150" y="90" width="700" height="90" rx="10" fill="#dbe8fb" stroke="#5b8bd6" stroke-width="2"/>
-<text x="500.0" y="124" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#1d3f80" text-anchor="middle">Camada de Apresentação</text>
-<text x="500.0" y="152" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#1d3f80" text-anchor="middle">Interface do usuário: apresentação da estrutura da vez, seleção do modo</text>
-<text x="500.0" y="174" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#1d3f80" text-anchor="middle">e telas dos instrumentos de avaliação</text>
-<rect x="60" y="240" width="380" height="100" rx="10" fill="#dcf3e3" stroke="#4aa56a" stroke-width="2"/>
-<text x="250.0" y="274" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#1c5b34" text-anchor="middle">Camada de Renderização 3D</text>
-<text x="250.0" y="302" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#1c5b34" text-anchor="middle">React Three Fiber: interpretação e exibição</text>
-<text x="250.0" y="324" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#1c5b34" text-anchor="middle">dos modelos glTF na cena tridimensional</text>
-<rect x="60" y="390" width="380" height="130" rx="10" fill="#fdf0cf" stroke="#d9a431" stroke-width="2"/>
-<text x="250.0" y="424" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#7a5600" text-anchor="middle">Modo Realidade Aumentada</text>
-<text x="250.0" y="452" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#7a5600" text-anchor="middle">Camada WebXR (@react-three/xr)</text>
-<text x="250.0" y="474" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#7a5600" text-anchor="middle">Detecção de superfícies (hit-test) e</text>
-<text x="250.0" y="496" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#7a5600" text-anchor="middle">posicionamento do modelo via câmera</text>
-<rect x="560" y="240" width="380" height="280" rx="10" fill="#fde3cf" stroke="#e08a3c" stroke-width="2"/>
-<text x="750.0" y="274" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#8a3f06" text-anchor="middle">Modo Bidimensional</text>
-<text x="750.0" y="302" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle">Imagens estáticas das estruturas,</text>
-<text x="750.0" y="324" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle">sem acesso à câmera nem</text>
-<text x="750.0" y="346" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle">sessão imersiva WebXR</text>
-<text x="750.0" y="368" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle"></text>
-<text x="750.0" y="390" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle">Cada estrutura aparece em vista lateral fixa,</text>
-<text x="750.0" y="412" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle">com a figura humana de referência,</text>
-<text x="750.0" y="434" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#8a3f06" text-anchor="middle">gerada a partir do mesmo modelo 3D.</text>
-<line x1="250" y1="180" x2="250" y2="240" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-<line x1="750" y1="180" x2="750" y2="240" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-<line x1="250" y1="340" x2="250" y2="390" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-<line x1="250" y1="520" x2="250" y2="555" stroke="#333" stroke-width="2"/>
-<line x1="750" y1="520" x2="750" y2="555" stroke="#333" stroke-width="2"/>
-<line x1="250" y1="555" x2="750" y2="555" stroke="#333" stroke-width="2"/>
-<line x1="500" y1="555" x2="500" y2="590" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-<rect x="150" y="590" width="700" height="80" rx="10" fill="#e6defa" stroke="#7d5fd0" stroke-width="2"/>
-<text x="500.0" y="624" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#3d2a80" text-anchor="middle">Camada de Dados</text>
-<text x="500.0" y="652" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#3d2a80" text-anchor="middle">Modelos glTF licenciados e imagens estáticas das estruturas</text>
-<line x1="500" y1="670" x2="500" y2="705" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-<rect x="150" y="705" width="700" height="80" rx="10" fill="#fbdfe9" stroke="#d4577f" stroke-width="2"/>
-<text x="500.0" y="739" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#7d1f43" text-anchor="middle">Camada de Coleta de Dados</text>
-<text x="500.0" y="767" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#7d1f43" text-anchor="middle">Registro client-side das interações; exportação em JSON ou CSV</text>
-<line x1="500" y1="785" x2="500" y2="820" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-<rect x="150" y="820" width="700" height="80" rx="10" fill="#e3e8f2" stroke="#6b7a99" stroke-width="2"/>
-<text x="500.0" y="854" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#2c3a5c" text-anchor="middle">Camada de Infraestrutura</text>
-<text x="500.0" y="882" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="normal" fill="#2c3a5c" text-anchor="middle">Hospedagem Vercel com HTTPS, requisito para sessões WebXR immersive-ar</text>
-<rect x="60" y="935" width="880" height="190" rx="8" fill="#f7f7f7" stroke="#bbb" stroke-width="1.5"/>
-<text x="85" y="968" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#222" text-anchor="start">Legenda do fluxo</text>
-<text x="85" y="1000" font-family="Arial, Helvetica, sans-serif" font-size="15.5" font-weight="normal" fill="#222" text-anchor="start">1. A interface apresenta a estrutura da vez e direciona a sessão ao modo da condição experimental.</text>
-<text x="85" y="1027" font-family="Arial, Helvetica, sans-serif" font-size="15.5" font-weight="normal" fill="#222" text-anchor="start">2. No modo RA, a renderização 3D carrega o modelo glTF e a camada WebXR detecta superfícies e posiciona o modelo.</text>
-<text x="85" y="1054" font-family="Arial, Helvetica, sans-serif" font-size="15.5" font-weight="normal" fill="#222" text-anchor="start">3. No modo bidimensional, a interface exibe diretamente as imagens estáticas das estruturas, sem renderização 3D.</text>
-<text x="85" y="1081" font-family="Arial, Helvetica, sans-serif" font-size="15.5" font-weight="normal" fill="#222" text-anchor="start">4. Os modelos e as imagens são lidos da camada de dados, e as interações do usuário são registradas localmente.</text>
-<text x="85" y="1108" font-family="Arial, Helvetica, sans-serif" font-size="15.5" font-weight="normal" fill="#222" text-anchor="start">5. Toda a aplicação é servida via Vercel, com HTTPS obrigatório para o funcionamento da WebXR.</text>
+<rect width="1050" height="1170" fill="#fff"/>
+<text x="500.0" y="58" font-family="Arial, Helvetica, sans-serif" font-size="29" font-weight="bold" fill="#222" text-anchor="middle">Arquitetura da Solução</text>
+<rect x="150" y="90" width="700" height="105" rx="10" fill="#dbe8fb" stroke="#5b8bd6" stroke-width="2"/>
+<text x="500.0" y="128" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#1d3f80" text-anchor="middle">Camada de Apresentação</text>
+<text x="500.0" y="158" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#1d3f80" text-anchor="middle">Interface do usuário: apresentação da estrutura da vez, seleção do modo</text>
+<text x="500.0" y="184" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#1d3f80" text-anchor="middle">e telas dos instrumentos de avaliação</text>
+<rect x="60" y="250" width="380" height="105" rx="10" fill="#dcf3e3" stroke="#4aa56a" stroke-width="2"/>
+<text x="250.0" y="288" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#1c5b34" text-anchor="middle">Camada de Renderização 3D</text>
+<text x="250.0" y="318" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#1c5b34" text-anchor="middle">React Three Fiber: interpretação e exibição</text>
+<text x="250.0" y="344" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#1c5b34" text-anchor="middle">dos modelos glTF na cena tridimensional</text>
+<rect x="60" y="405" width="380" height="140" rx="10" fill="#fdf0cf" stroke="#d9a431" stroke-width="2"/>
+<text x="250.0" y="443" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#7a5600" text-anchor="middle">Modo Realidade Aumentada</text>
+<text x="250.0" y="473" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#7a5600" text-anchor="middle">Camada WebXR (@react-three/xr)</text>
+<text x="250.0" y="499" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#7a5600" text-anchor="middle">Detecção de superfícies (hit-test) e</text>
+<text x="250.0" y="525" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#7a5600" text-anchor="middle">posicionamento do modelo via câmera</text>
+<rect x="560" y="250" width="380" height="295" rx="10" fill="#fde3cf" stroke="#e08a3c" stroke-width="2"/>
+<text x="750.0" y="288" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#8a3f06" text-anchor="middle">Modo Bidimensional</text>
+<text x="750.0" y="318" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#8a3f06" text-anchor="middle">Imagens estáticas das estruturas,</text>
+<text x="750.0" y="344" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#8a3f06" text-anchor="middle">sem acesso à câmera nem</text>
+<text x="750.0" y="370" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#8a3f06" text-anchor="middle">sessão imersiva WebXR</text>
+<text x="750.0" y="422" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#8a3f06" text-anchor="middle">Cada estrutura aparece em vista lateral fixa,</text>
+<text x="750.0" y="448" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#8a3f06" text-anchor="middle">com a figura humana de referência,</text>
+<text x="750.0" y="474" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#8a3f06" text-anchor="middle">gerada a partir do mesmo modelo 3D.</text>
+<line x1="250" y1="195" x2="250" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="750" y1="195" x2="750" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="250" y1="355" x2="250" y2="405" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="250" y1="545" x2="250" y2="580" stroke="#333" stroke-width="2"/>
+<line x1="750" y1="545" x2="750" y2="580" stroke="#333" stroke-width="2"/>
+<line x1="250" y1="580" x2="750" y2="580" stroke="#333" stroke-width="2"/>
+<line x1="500" y1="580" x2="500" y2="615" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+<rect x="150" y="615" width="700" height="80" rx="10" fill="#e6defa" stroke="#7d5fd0" stroke-width="2"/>
+<text x="500.0" y="653" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#3d2a80" text-anchor="middle">Camada de Dados</text>
+<text x="500.0" y="683" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#3d2a80" text-anchor="middle">Modelos glTF licenciados e imagens estáticas das estruturas</text>
+<line x1="500" y1="695" x2="500" y2="730" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+<rect x="150" y="730" width="700" height="80" rx="10" fill="#fbdfe9" stroke="#d4577f" stroke-width="2"/>
+<text x="500.0" y="768" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#7d1f43" text-anchor="middle">Camada de Coleta de Dados</text>
+<text x="500.0" y="798" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#7d1f43" text-anchor="middle">Registro client-side das interações; exportação em JSON ou CSV</text>
+<line x1="500" y1="810" x2="500" y2="845" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+<rect x="150" y="845" width="700" height="80" rx="10" fill="#e3e8f2" stroke="#6b7a99" stroke-width="2"/>
+<text x="500.0" y="883" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="bold" fill="#2c3a5c" text-anchor="middle">Camada de Infraestrutura</text>
+<text x="500.0" y="913" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="normal" fill="#2c3a5c" text-anchor="middle">Hospedagem Vercel com HTTPS, requisito para sessões WebXR immersive-ar</text>
+<rect x="30" y="960" width="990" height="185" rx="8" fill="#f7f7f7" stroke="#bbb" stroke-width="1.5"/>
+<text x="50" y="993" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#222" text-anchor="start">Legenda do fluxo</text>
+<text x="50" y="1026" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="normal" fill="#222" text-anchor="start">1. A interface apresenta a estrutura da vez e direciona a sessão ao modo da condição experimental.</text>
+<text x="50" y="1053" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="normal" fill="#222" text-anchor="start">2. No modo RA, a renderização 3D carrega o modelo glTF e a camada WebXR detecta superfícies e posiciona o modelo.</text>
+<text x="50" y="1080" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="normal" fill="#222" text-anchor="start">3. No modo bidimensional, a interface exibe diretamente as imagens estáticas das estruturas, sem renderização 3D.</text>
+<text x="50" y="1107" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="normal" fill="#222" text-anchor="start">4. Os modelos e as imagens são lidos da camada de dados, e as interações do usuário são registradas localmente.</text>
+<text x="50" y="1134" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="normal" fill="#222" text-anchor="start">5. Toda a aplicação é servida via Vercel, com HTTPS obrigatório para o funcionamento da WebXR.</text>
 </svg>
