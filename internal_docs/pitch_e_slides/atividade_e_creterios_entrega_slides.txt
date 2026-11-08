@@ -1,0 +1,65 @@
+APRESENTAÇÃO PRESENCIAL - AF
+Vencimento: Dom 8 de Nov de 2026 23:59
+0 Points Possible
+Tentativa 1
+Em progresso
+PRÓXIMO: Enviar tarefa
+
+Unlimited Attempts Allowed
+Disponível: 14 de Out de 2026 19:00 até 8 de Nov de 2026 23:59
+ATIVIDADE – ENTREGA DA APRESENTAÇÃO PITCH
+
+1. Objetivo da Atividade
+
+Esta atividade tem como objetivo formalizar a entrega da apresentação *pitch* desenvolvida pela equipe para a Mostra de Projetos 2026, seguindo o template institucional e as orientações apresentadas em aula. A apresentação deverá comunicar, de forma clara, objetiva e fundamentada, o projeto desenvolvido ao longo do semestre, destacando o problema investigado, os objetivos, a metodologia, o desenvolvimento da solução, os resultados obtidos e as conclusões.
+
+2. Orientações para a Apresentação
+
+Cada equipe deverá elaborar sua apresentação utilizando obrigatoriamente o template oficial da Mostra de Projetos 2026.
+
+Template institucional: https://canva.link/kbhkql0uqu0udu6
+
+A apresentação deverá contemplar:
+
+1. **Identificação do projeto:** código UPX, número do grupo e título.
+2. **Contextualização e problema:** problema identificado, público-alvo e proposta de valor.
+3. **Objetivos:** objetivos do projeto e funcionalidades propostas.
+4. **Metodologia:** procedimentos, ferramentas e tecnologias utilizadas.
+5. **Desenvolvimento:** apresentação da solução, funcionalidades implementadas e demonstração do protótipo.
+6. **Resultados:** evidências do desenvolvimento, testes realizados e validação com usuários.
+7. **Conclusões:** resultados alcançados, limitações e melhorias futuras.
+8. **Referências e contatos:** fontes utilizadas e informações relevantes.
+9. **QR Code:** acesso à aplicação, demonstração ou material complementar, quando aplicável.
+
+A apresentação presencial deverá respeitar o tempo estabelecido pela instituição, de **5 a 8 minutos por grupo**.
+
+3. Entrega da Atividade
+
+A equipe deverá entregar **exclusivamente o link de acesso à apresentação criada no Canva**, utilizando o template institucional disponibilizado.
+
+**Regras obrigatórias:**
+
+- O link deverá ser inserido diretamente no campo de resposta desta atividade no Canvas.
+- A apresentação deverá estar configurada para permitir sua visualização pelos avaliadores.
+- Não serão aceitos arquivos em PowerPoint (PPT/PPTX), PDF ou outros formatos como entrega desta atividade.
+- O conteúdo poderá ser atualizado até o momento da apresentação presencial, conforme as orientações institucionais.
+- Cada equipe deverá realizar apenas uma entrega, identificando o código UPX, o número do grupo e o nome do projeto.
+
+**Importante:** embora a entrega no Canvas seja exclusivamente por link, a equipe deverá levar uma cópia da apresentação em PDF, salva em um pen drive, como recurso de segurança para o dia da Mostra de Projetos.
+
+4. Prazo de Entrega
+
+Data-limite: 08/11/2026. O link deverá ser disponibilizado nesta atividade até a data estabelecida.
+
+5. Critérios de Verificação da Entrega
+
+A entrega será verificada considerando:
+
+- Envio do link dentro do prazo.
+- Funcionamento e acessibilidade do link.
+- Utilização do template institucional.
+- Presença das seções obrigatórias da apresentação.
+- Organização do conteúdo de acordo com as orientações da disciplina.
+
+**Atenção:** esta atividade destina-se exclusivamente à entrega do link da apresentação *Slides de Apresentação*. O vídeo pitch deverá ser entregue separadamente, em atividade específica no Canvas, conforme as orientações da Mostra de Projetos 2026.
+    

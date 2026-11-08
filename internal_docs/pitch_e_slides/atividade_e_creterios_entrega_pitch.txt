@@ -1,0 +1,107 @@
+APRESENTAÇÃO VÍDEO PITCH - AF
+Vencimento: Dom 8 de Nov de 2026 23:59
+0 Points Possible
+Tentativa 1
+Em progresso
+PRÓXIMO: Enviar tarefa
+
+Unlimited Attempts Allowed
+Disponível: 14 de Out de 2026 19:00 até 8 de Nov de 2026 23:59
+APRESENTAÇÃO DO PROJETO – PITCH COM DEMONSTRAÇÃO DO PROTÓTIPO (3 À 4 MINUTOS)
+
+1. Objetivo da Atividade
+
+Esta atividade tem como objetivo desenvolver a capacidade dos estudantes de apresentar e defender, de forma clara, objetiva e persuasiva, a proposta do projeto desenvolvido pela equipe, incorporando a demonstração da versão preliminar da aplicação. A apresentação deverá comunicar os principais elementos do projeto, demonstrando domínio do problema, coerência da solução proposta, organização da equipe e capacidade de representar a solução por meio de um protótipo.
+
+2. Descrição da Atividade
+
+Cada equipe deverá realizar uma apresentação no formato Pitch, com duração máxima de 4 minutos e minima de 3 minutos, apresentando o projeto desenvolvido e demonstrando a prototipação da aplicação. A apresentação deverá seguir o modelo utilizado anteriormente, preservando os elementos fundamentais da proposta e incorporando uma demonstração das principais telas, funcionalidades e fluxos de interação. O foco deverá ser a apresentação do projeto como uma solução integrada, relacionando o problema identificado, o público-alvo, a proposta de solução e sua representação no protótipo.
+
+3. Estrutura Obrigatória da Apresentação
+
+3.1. Identificação do Projeto
+
+Nome do projeto.
+Nome da equipe.
+Integrantes e respectivas funções.
+3.2. Descrição do Projeto
+
+Explicação do projeto em uma frase clara e objetiva.
+Apresentação da finalidade principal da aplicação.
+3.3. Problema e Público-Alvo
+
+Qual problema o projeto pretende resolver.
+Contextualização do problema.
+Quem será beneficiado pela aplicação.
+Contexto de utilização da solução.
+3.4. Proposta de Solução
+
+Como a aplicação pretende resolver o problema identificado.
+Principais funcionalidades propostas.
+Diferenciais da solução em relação às alternativas existentes, quando aplicável.
+3.5. Demonstração da Prototipação
+
+Apresentação das principais telas da aplicação.
+Demonstração da navegação e dos fluxos de interação.
+Exemplificação de uma situação de utilização da aplicação.
+Relação entre as funcionalidades representadas no protótipo e o problema que o projeto pretende resolver.
+Esta deverá ser a parte principal da apresentação. A equipe deverá demonstrar a prototipação de forma objetiva, priorizando os principais fluxos de utilização, em vez de apresentar individualmente todas as telas.
+3.6. Estrutura do Projeto
+
+Tecnologias e ferramentas previstas ou utilizadas.
+Visão geral da organização da aplicação.
+Principais componentes do sistema, quando aplicável.
+3.7. Planejamento
+
+Principais etapas previstas para a continuidade do projeto.
+Funcionalidades que ainda serão implementadas.
+Previsão de conclusão das atividades.
+3.8. Conclusão
+
+Síntese da proposta apresentada.
+Relevância da aplicação para o público-alvo.
+Encerramento da apresentação.
+5. Requisitos da Apresentação
+
+A apresentação deverá:
+
+Respeitar o tempo máximo de 4 minutos.
+Ser clara, objetiva e bem estruturada.
+Apresentar coerência entre problema, público-alvo e solução.
+Demonstrar a prototipação da aplicação.
+Apresentar pelo menos um fluxo de interação representativo da solução.
+Demonstrar domínio do conteúdo por parte da equipe.
+Utilizar slides como material de apoio.
+Evidenciar como a solução proposta poderá atender às necessidades dos usuários.
+A demonstração poderá utilizar ferramentas de prototipação, interfaces navegáveis ou uma versão preliminar da aplicação.
+O vídeo poderá ser editado para melhor adequação e disponibilidade de conteúdo.
+O orador deverá manter a câmera ligada exibindo seu rosto, caso tenha mais de um orador o mesmo deve executar o procedimento.
+6. Entrega
+
+Será necessário somente o envio do link de acesso do vídeo postado no Youtube como não listado.
+Não será aceito a entrega de qualquer outro tipo de arquivo (vídeos, slides e etc)
+7. Observações Importantes
+
+Apresentações fora do tempo estabelecido poderão sofrer penalização.
+A prototipação deverá representar as principais funcionalidades propostas para a aplicação.
+Não será necessário demonstrar todas as funcionalidades do sistema.
+A demonstração deverá priorizar os fluxos mais relevantes para o público-alvo.
+A apresentação de telas isoladas, sem contextualização do seu funcionamento, poderá comprometer a avaliação.
+Não será exigida uma aplicação completamente funcional, considerando o estágio preliminar do projeto.
+Apresentações com conteúdo incompleto, incoerente ou sem domínio do tema poderão sofrer penalização.
+8. Critérios de Avaliação
+
+A apresentação será avaliada considerando:
+
+8.1. Clareza e objetividade: capacidade de comunicar a proposta de forma compreensível e adequada ao tempo disponível.
+
+8.2. Coerência entre problema e solução: alinhamento entre o problema identificado, o público-alvo e as funcionalidades propostas.
+
+8.3. Qualidade da argumentação: capacidade de justificar a relevância do projeto e os diferenciais da solução.
+
+8.4. Demonstração da prototipação: qualidade das telas apresentadas, clareza dos fluxos de interação e capacidade de demonstrar a utilização da aplicação.
+
+8.5. Domínio do conteúdo: conhecimento demonstrado pela equipe sobre o projeto e a solução proposta.
+
+8.6. Organização e estrutura: atendimento ao roteiro obrigatório, qualidade do material visual e cumprimento do tempo estabelecido.
+
